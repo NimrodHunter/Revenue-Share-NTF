@@ -1155,8 +1155,8 @@
       ]
     },
     "D:\\Documentos\\Programming\\Revenue-Share\\contracts\\RevenueShare.sol": {
-      "lastModificationDate": 1644840852321,
-      "contentHash": "7e8e61847d31d3ee66d82fab28b60b7c",
+      "lastModificationDate": 1644963314891,
+      "contentHash": "f6354e576434dd6550e53d55a2ab3059",
       "sourceName": "contracts/RevenueShare.sol",
       "solcConfig": {
         "version": "0.8.9",
@@ -1186,14 +1186,93 @@
       },
       "imports": [
         "@openzeppelin/contracts/token/ERC721/ERC721.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
         "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
-        "@openzeppelin/contracts/utils/Address.sol"
+        "@openzeppelin/contracts/utils/Address.sol",
+        "@openzeppelin/contracts/security/ReentrancyGuard.sol",
+        "./Base64.sol"
       ],
       "versionPragmas": [
         ">=0.8.4"
       ],
       "artifacts": [
         "RevenueShare"
+      ]
+    },
+    "D:\\Documentos\\Programming\\Revenue-Share\\node_modules\\@openzeppelin\\contracts\\security\\ReentrancyGuard.sol": {
+      "lastModificationDate": 1644840263796,
+      "contentHash": "92f9448b23a90ea3bb932ee55cc3ccce",
+      "sourceName": "@openzeppelin/contracts/security/ReentrancyGuard.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "optimizer": {
+            "enabled": true,
+            "runs": 800
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ReentrancyGuard"
+      ]
+    },
+    "D:\\Documentos\\Programming\\Revenue-Share\\contracts\\Base64.sol": {
+      "lastModificationDate": 1644953704515,
+      "contentHash": "3c6fe76e5fd81bd29dafc935df800b33",
+      "sourceName": "contracts/Base64.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "optimizer": {
+            "enabled": true,
+            "runs": 800
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.8.4"
+      ],
+      "artifacts": [
+        "Base64"
       ]
     }
   }

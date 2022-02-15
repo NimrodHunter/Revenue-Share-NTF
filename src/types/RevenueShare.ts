@@ -20,20 +20,33 @@ import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 export interface RevenueShareInterface extends utils.Interface {
   contractName: "RevenueShare";
   functions: {
+    "_projectToken()": FunctionFragment;
+    "_rewardToken()": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "name()": FunctionFragment;
     "ownerOf(uint256)": FunctionFragment;
+    "revToken(uint256)": FunctionFragment;
+    "rsId()": FunctionFragment;
     "safeTransferFrom(address,address,uint256)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
+    "stake(uint128,uint128)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "symbol()": FunctionFragment;
     "tokenURI(uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "_projectToken",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_rewardToken",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "approve",
     values: [string, BigNumberish]
@@ -53,12 +66,21 @@ export interface RevenueShareInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "revToken",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "rsId", values?: undefined): string;
+  encodeFunctionData(
     functionFragment: "safeTransferFrom",
     values: [string, string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setApprovalForAll",
     values: [string, boolean]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "stake",
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
@@ -74,6 +96,14 @@ export interface RevenueShareInterface extends utils.Interface {
     values: [string, string, BigNumberish]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "_projectToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_rewardToken",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
@@ -86,6 +116,8 @@ export interface RevenueShareInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "revToken", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "rsId", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "safeTransferFrom",
     data: BytesLike
@@ -94,6 +126,7 @@ export interface RevenueShareInterface extends utils.Interface {
     functionFragment: "setApprovalForAll",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "stake", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
     data: BytesLike
@@ -165,6 +198,10 @@ export interface RevenueShare extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    _projectToken(overrides?: CallOverrides): Promise<[string]>;
+
+    _rewardToken(overrides?: CallOverrides): Promise<[string]>;
+
     approve(
       to: string,
       tokenId: BigNumberish,
@@ -191,6 +228,19 @@ export interface RevenueShare extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    revToken(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        created: BigNumber;
+        locked: BigNumber;
+        amount: BigNumber;
+      }
+    >;
+
+    rsId(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     "safeTransferFrom(address,address,uint256)"(
       from: string,
       to: string,
@@ -209,6 +259,12 @@ export interface RevenueShare extends BaseContract {
     setApprovalForAll(
       operator: string,
       approved: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    stake(
+      amount: BigNumberish,
+      lock: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -231,6 +287,10 @@ export interface RevenueShare extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
+
+  _projectToken(overrides?: CallOverrides): Promise<string>;
+
+  _rewardToken(overrides?: CallOverrides): Promise<string>;
 
   approve(
     to: string,
@@ -255,6 +315,19 @@ export interface RevenueShare extends BaseContract {
 
   ownerOf(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
+  revToken(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber] & {
+      created: BigNumber;
+      locked: BigNumber;
+      amount: BigNumber;
+    }
+  >;
+
+  rsId(overrides?: CallOverrides): Promise<BigNumber>;
+
   "safeTransferFrom(address,address,uint256)"(
     from: string,
     to: string,
@@ -276,6 +349,12 @@ export interface RevenueShare extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  stake(
+    amount: BigNumberish,
+    lock: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   supportsInterface(
     interfaceId: BytesLike,
     overrides?: CallOverrides
@@ -293,6 +372,10 @@ export interface RevenueShare extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    _projectToken(overrides?: CallOverrides): Promise<string>;
+
+    _rewardToken(overrides?: CallOverrides): Promise<string>;
+
     approve(
       to: string,
       tokenId: BigNumberish,
@@ -316,6 +399,19 @@ export interface RevenueShare extends BaseContract {
 
     ownerOf(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
+    revToken(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        created: BigNumber;
+        locked: BigNumber;
+        amount: BigNumber;
+      }
+    >;
+
+    rsId(overrides?: CallOverrides): Promise<BigNumber>;
+
     "safeTransferFrom(address,address,uint256)"(
       from: string,
       to: string,
@@ -336,6 +432,12 @@ export interface RevenueShare extends BaseContract {
       approved: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    stake(
+      amount: BigNumberish,
+      lock: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     supportsInterface(
       interfaceId: BytesLike,
@@ -390,6 +492,10 @@ export interface RevenueShare extends BaseContract {
   };
 
   estimateGas: {
+    _projectToken(overrides?: CallOverrides): Promise<BigNumber>;
+
+    _rewardToken(overrides?: CallOverrides): Promise<BigNumber>;
+
     approve(
       to: string,
       tokenId: BigNumberish,
@@ -416,6 +522,10 @@ export interface RevenueShare extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    revToken(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    rsId(overrides?: CallOverrides): Promise<BigNumber>;
+
     "safeTransferFrom(address,address,uint256)"(
       from: string,
       to: string,
@@ -434,6 +544,12 @@ export interface RevenueShare extends BaseContract {
     setApprovalForAll(
       operator: string,
       approved: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    stake(
+      amount: BigNumberish,
+      lock: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -458,6 +574,10 @@ export interface RevenueShare extends BaseContract {
   };
 
   populateTransaction: {
+    _projectToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    _rewardToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     approve(
       to: string,
       tokenId: BigNumberish,
@@ -487,6 +607,13 @@ export interface RevenueShare extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    revToken(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    rsId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     "safeTransferFrom(address,address,uint256)"(
       from: string,
       to: string,
@@ -505,6 +632,12 @@ export interface RevenueShare extends BaseContract {
     setApprovalForAll(
       operator: string,
       approved: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    stake(
+      amount: BigNumberish,
+      lock: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
