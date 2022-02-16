@@ -63,13 +63,13 @@ contract StakedShare is ERC721, ReentrancyGuard {
         require(block.timestamp >= lockedTime, "your token it is locked");
         _burn(tokenId);
         delete revToken[tokenId];
-        require(_safeTransferToken(msg.sender, uint256(rs.amount)), "transfer reward token fail");
+        require(_transferToken(msg.sender, uint256(rs.amount)), "transfer reward token fail");
         emit Withdrawn(msg.sender, uint256(rs.amount), tokenId);
         return true;
     }
 
 
-    // Main Getters
+    // Getters
 
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
@@ -126,7 +126,7 @@ contract StakedShare is ERC721, ReentrancyGuard {
         return true;
     }
 
-     function _safeTransferToken(address to, uint256 amount) internal virtual returns (bool) {
+     function _transferToken(address to, uint256 amount) internal virtual returns (bool) {
         require(to != address(0), "must be valid address");
         require(amount > 0, "you must send something");
         SafeERC20.safeTransfer(IERC20(projectToken), to, amount);

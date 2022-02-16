@@ -11,6 +11,7 @@ export type { IERC721Receiver } from "./IERC721Receiver";
 export type { ERC165 } from "./ERC165";
 export type { IERC165 } from "./IERC165";
 export type { MockToken } from "./MockToken";
+export type { RevenueClaim } from "./RevenueClaim";
 export type { StakedShare } from "./StakedShare";
 
 export { ERC20__factory } from "./factories/ERC20__factory";
@@ -23,4 +24,5 @@ export { IERC721Receiver__factory } from "./factories/IERC721Receiver__factory";
 export { ERC165__factory } from "./factories/ERC165__factory";
 export { IERC165__factory } from "./factories/IERC165__factory";
 export { MockToken__factory } from "./factories/MockToken__factory";
+export { RevenueClaim__factory } from "./factories/RevenueClaim__factory";
 export { StakedShare__factory } from "./factories/StakedShare__factory";
