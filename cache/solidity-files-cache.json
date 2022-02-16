@@ -1155,8 +1155,8 @@
       ]
     },
     "D:\\Documentos\\Programming\\Revenue-Share\\contracts\\RevenueShare.sol": {
-      "lastModificationDate": 1644963314891,
-      "contentHash": "f6354e576434dd6550e53d55a2ab3059",
+      "lastModificationDate": 1644978953796,
+      "contentHash": "e3c76f05ddd4d0487c7fe18e59ae1e70",
       "sourceName": "contracts/RevenueShare.sol",
       "solcConfig": {
         "version": "0.8.9",

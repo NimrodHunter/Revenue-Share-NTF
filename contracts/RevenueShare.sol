@@ -53,17 +53,21 @@ contract RevenueShare is ERC721, ReentrancyGuard {
         uint64 lockedTime = uint32(lock)*MIN_LOKED_TIME;
         require(lockedTime <= MAX_LOKED_TIME, "you should lock less than 1 year");
         require(IERC20(_projectToken).allowance(msg.sender, address(this)) >= uint256(amount), "token not allowed");
-        require(_transferFrom(msg.sender, _projectToken, amount), "transfer from fails");
+        require(_transferFrom(msg.sender, amount), "transfer from fails");
         uint256 id = ++rsId;
         _safeMint(msg.sender, id, "new revenue share token");
-        _setApprovalForAll(msg.sender, address(this), true);
-        RSToken memory rs = RSToken({created: uint64(block.timestamp), locked: uint64(lockedTime), amount: amount});
-        revToken[id] = rs;
+        revToken[id] = RSToken({created: uint64(block.timestamp), locked: uint64(lockedTime), amount: amount});
         return true;
     }
 
-    function _transferFrom(address from, address token, uint256 amount) internal virtual returns (bool) {
-        SafeERC20.safeTransferFrom(IERC20(token), from, address(this), amount);
+    function withdraw(uint256 tokenId) public virtual nonReentrant returns (bool) {
+        require(ownerOf(tokenId) == msg.sender, "you are not the owner of the token");
+        RSToken memory rs = revToken[tokenId];
+        uint256 lockedTime = uint256(rs.created + rs.locked);
+        require(block.timestamp >= lockedTime, "your token it is locked");
+        _burn(tokenId);
+        delete revToken[tokenId];
+        require(_safeTransferToken(msg.sender, uint256(rs.amount)), "transfer reward token fail");
         return true;
     }
 
@@ -79,7 +83,6 @@ contract RevenueShare is ERC721, ReentrancyGuard {
             rs.locked
         );
     }
-
 
     function _tokenURI(uint256 _tokenId, uint128 _amount, uint64 _created, uint64 _locked) internal pure returns (string memory output) {
         output = '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350"><style>.base { fill: white; font-family: serif; font-size: 14px; }</style><rect width="100%" height="100%" fill="black" /><text x="10" y="20" class="base">';
@@ -112,6 +115,20 @@ contract RevenueShare is ERC721, ReentrancyGuard {
             value /= 10;
         }
         return string(buffer);
+    }
+
+    function _transferFrom(address from, uint256 amount) internal virtual returns (bool) {
+        require(from != address(0), "must be valid address");
+        require(amount > 0, "you must send something");
+        SafeERC20.safeTransferFrom(IERC20(_projectToken), from, address(this), amount);
+        return true;
+    }
+
+     function _safeTransferToken(address to, uint256 amount) internal virtual returns (bool) {
+        require(to != address(0), "must be valid address");
+        require(amount > 0, "you must send something");
+        SafeERC20.safeTransfer(IERC20(_rewardToken), to, amount);
+        return true;
     }
 
 } 
