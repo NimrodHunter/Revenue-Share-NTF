@@ -13,10 +13,6 @@ import * as Contracts from ".";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
-      name: "VestingWallet",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.VestingWallet__factory>;
-    getContractFactory(
       name: "ERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC20__factory>;
@@ -57,23 +53,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MockToken__factory>;
     getContractFactory(
-      name: "RevenueShare",
+      name: "StakedShare",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.RevenueShare__factory>;
-    getContractFactory(
-      name: "VestedToken",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.VestedToken__factory>;
-    getContractFactory(
-      name: "Vesting",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Vesting__factory>;
+    ): Promise<Contracts.StakedShare__factory>;
 
-    getContractAt(
-      name: "VestingWallet",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.VestingWallet>;
     getContractAt(
       name: "ERC20",
       address: string,
@@ -125,20 +108,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.MockToken>;
     getContractAt(
-      name: "RevenueShare",
+      name: "StakedShare",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.RevenueShare>;
-    getContractAt(
-      name: "VestedToken",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.VestedToken>;
-    getContractAt(
-      name: "Vesting",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Vesting>;
+    ): Promise<Contracts.StakedShare>;
 
     // default types
     getContractFactory(

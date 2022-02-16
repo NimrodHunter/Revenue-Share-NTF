@@ -2,7 +2,7 @@ import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signe
 import type { Fixture } from "ethereum-waffle";
 
 import type { MockToken } from "../src/types/MockToken";
-import type { RevenueShare } from "../src/types/RevenueShare";
+import type { StakedShare } from "../src/types/StakedShare";
 
 declare module "mocha" {
     export interface Context {
@@ -11,7 +11,7 @@ declare module "mocha" {
         signers: Signers;
     }
     export interface Context {
-        revenueShare: RevenueShare;
+        stakedShare: StakedShare;
         loadFixture: <T>(fixture: Fixture<T>) => Promise<T>;
         signers: Signers;
     }
