@@ -1,16 +1,18 @@
 // SPDX-License-Identifier: MIT
+// @title StakedShare
+// @notice Provides functions to stake ERC20 and get NFT in order to claim passive income
+// @author Anibal Catalan <anibalcatalanf@gmail.com>
+
 pragma solidity >=0.8.4;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./Base64.sol";
 
 //solhint-disable-line
 contract StakedShare is ERC721, ReentrancyGuard {
-    using Address for address;
 
     //Max Loked Period;
     uint32 internal constant MAX_LOKED_TIME = 60 * 60 * 24 * 365; // 1 year
