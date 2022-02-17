@@ -22,6 +22,7 @@ export interface RevenueClaimInterface extends utils.Interface {
   functions: {
     "claim(uint256,uint256,bytes32[])": FunctionFragment;
     "initialize(address,address,uint256,bytes32)": FunctionFragment;
+    "rewardToken()": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -32,9 +33,17 @@ export interface RevenueClaimInterface extends utils.Interface {
     functionFragment: "initialize",
     values: [string, string, BigNumberish, BytesLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "rewardToken",
+    values?: undefined
+  ): string;
 
   decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "rewardToken",
+    data: BytesLike
+  ): Result;
 
   events: {
     "Claimed(address,uint256,uint256)": EventFragment;
@@ -86,12 +95,14 @@ export interface RevenueClaim extends BaseContract {
     ): Promise<ContractTransaction>;
 
     initialize(
-      revenueToken: string,
-      rewardToken: string,
+      NFT_: string,
+      rewardToken_: string,
       amount: BigNumberish,
       root_: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    rewardToken(overrides?: CallOverrides): Promise<[string]>;
   };
 
   claim(
@@ -102,12 +113,14 @@ export interface RevenueClaim extends BaseContract {
   ): Promise<ContractTransaction>;
 
   initialize(
-    revenueToken: string,
-    rewardToken: string,
+    NFT_: string,
+    rewardToken_: string,
     amount: BigNumberish,
     root_: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  rewardToken(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
     claim(
@@ -118,12 +131,14 @@ export interface RevenueClaim extends BaseContract {
     ): Promise<boolean>;
 
     initialize(
-      revenueToken: string,
-      rewardToken: string,
+      NFT_: string,
+      rewardToken_: string,
       amount: BigNumberish,
       root_: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    rewardToken(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -148,12 +163,14 @@ export interface RevenueClaim extends BaseContract {
     ): Promise<BigNumber>;
 
     initialize(
-      revenueToken: string,
-      rewardToken: string,
+      NFT_: string,
+      rewardToken_: string,
       amount: BigNumberish,
       root_: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    rewardToken(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -165,11 +182,13 @@ export interface RevenueClaim extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     initialize(
-      revenueToken: string,
-      rewardToken: string,
+      NFT_: string,
+      rewardToken_: string,
       amount: BigNumberish,
       root_: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    rewardToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

@@ -14,11 +14,11 @@ import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 //solhint-disable-line
 contract RevenueClaim is ReentrancyGuard {
 
-    address internal initializer;
-    address internal ERC20token;
-    address internal ERC721token;
-    bytes32 internal root;
-
+    address private initializer;
+    address private NFT;
+    bytes32 private root;
+    address public rewardToken;
+    
     mapping(address => mapping(uint256 => bool)) private claimed;
 
     constructor()
@@ -27,22 +27,22 @@ contract RevenueClaim is ReentrancyGuard {
     }
 
     // Initializer
-    function initialize(address revenueToken, address rewardToken, uint256 amount, bytes32 root_) external {
+    function initialize(address NFT_, address rewardToken_, uint256 amount, bytes32 root_) external {   
         require(initializer == msg.sender, "msg.sender it is not the initializer");
         require(root_[0] != 0, "empty root");
         require(rewardToken != address(0), "reward token should not be 0");
         require(amount > 0, "amount should be greater than 0");
-        ERC20token = rewardToken;
-        ERC721token = revenueToken;
+        require(IERC20(rewardToken).balanceOf(address(this)) == amount, "out of funds");
+        NFT = NFT_;
+        rewardToken = rewardToken_;
         root = root_;
-        _transferFrom(msg.sender, amount);
         initializer = address(0);
     }
 
     // Main Function
 
     function claim(uint256 tokenId, uint256 amount, bytes32[] memory merkleProof) public virtual nonReentrant returns (bool) {  
-        require(IERC721(ERC721token).ownerOf(tokenId) == msg.sender, "your are not the owner of ERC721");
+        require(IERC721(NFT).ownerOf(tokenId) == msg.sender, "your are not the owner of ERC721");
         require(!claimed[msg.sender][tokenId], "reward alrready claimed");
         require(_verifyClaim(msg.sender, tokenId, amount, merkleProof), "merkle proof fail");
         require(_transferToken(msg.sender, amount), "reward transfer fail");
@@ -52,17 +52,10 @@ contract RevenueClaim is ReentrancyGuard {
     }
 
     // Internal Functions
-    function _transferFrom(address from, uint256 amount) internal virtual returns (bool) {
-        require(from != address(0), "must be valid address");
-        require(amount > 0, "you must send something");
-        SafeERC20.safeTransferFrom(IERC20(ERC20token), from, address(this), amount);
-        return true;
-    }
-
     function _transferToken(address to, uint256 amount) internal virtual returns (bool) {
         require(to != address(0), "must be valid address");
         require(amount > 0, "you must send something");
-        SafeERC20.safeTransfer(IERC20(ERC20token), to, amount);
+        SafeERC20.safeTransfer(IERC20(rewardToken), to, amount);
         return true;
     }
 

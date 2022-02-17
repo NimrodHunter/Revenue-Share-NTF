@@ -21,7 +21,7 @@ contract StakedShare is ERC721, ReentrancyGuard {
     uint32 internal constant MIN_LOKED_TIME = 60 * 60 * 24 * 7; // 1 week
 
     //ERC20 Project Token
-    address public projectToken;
+    address immutable public projectToken;
 
     struct RSToken {
         uint64 created;
@@ -126,14 +126,14 @@ contract StakedShare is ERC721, ReentrancyGuard {
         return true;
     }
 
-     function _transferToken(address to, uint256 amount) internal virtual returns (bool) {
+    function _transferToken(address to, uint256 amount) internal virtual returns (bool) {
         require(to != address(0), "must be valid address");
         require(amount > 0, "you must send something");
         SafeERC20.safeTransfer(IERC20(projectToken), to, amount);
         return true;
     }
 
-    // Internal Events
+    // Events
 
     event Staked(address indexed staker, uint256 indexed amount, uint256 indexed NFTId);
     event Withdrawn(address indexed withdrawer, uint256 indexed amount, uint256 indexed NFTId);
