@@ -29,6 +29,7 @@ export interface StakedShareInterface extends utils.Interface {
     "projectToken()": FunctionFragment;
     "revToken(uint256)": FunctionFragment;
     "rsId()": FunctionFragment;
+    "rsToken(uint256)": FunctionFragment;
     "safeTransferFrom(address,address,uint256)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
     "stake(uint128,uint128)": FunctionFragment;
@@ -66,6 +67,10 @@ export interface StakedShareInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "rsId", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "rsToken",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "safeTransferFrom",
     values: [string, string, BigNumberish]
@@ -114,6 +119,7 @@ export interface StakedShareInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "revToken", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "rsId", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "rsToken", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "safeTransferFrom",
     data: BytesLike
@@ -254,6 +260,11 @@ export interface StakedShare extends BaseContract {
 
     rsId(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    rsToken(
+      tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber, BigNumber]>;
+
     "safeTransferFrom(address,address,uint256)"(
       from: string,
       to: string,
@@ -344,6 +355,11 @@ export interface StakedShare extends BaseContract {
 
   rsId(overrides?: CallOverrides): Promise<BigNumber>;
 
+  rsToken(
+    tokenId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<[BigNumber, BigNumber, BigNumber]>;
+
   "safeTransferFrom(address,address,uint256)"(
     from: string,
     to: string,
@@ -431,6 +447,11 @@ export interface StakedShare extends BaseContract {
 
     rsId(overrides?: CallOverrides): Promise<BigNumber>;
 
+    rsToken(
+      tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber, BigNumber]>;
+
     "safeTransferFrom(address,address,uint256)"(
       from: string,
       to: string,
@@ -456,7 +477,7 @@ export interface StakedShare extends BaseContract {
       amount: BigNumberish,
       lock: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     supportsInterface(
       interfaceId: BytesLike,
@@ -474,10 +495,7 @@ export interface StakedShare extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    withdraw(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+    withdraw(tokenId: BigNumberish, overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
@@ -570,6 +588,11 @@ export interface StakedShare extends BaseContract {
 
     rsId(overrides?: CallOverrides): Promise<BigNumber>;
 
+    rsToken(
+      tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     "safeTransferFrom(address,address,uint256)"(
       from: string,
       to: string,
@@ -660,6 +683,11 @@ export interface StakedShare extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     rsId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    rsToken(
+      tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     "safeTransferFrom(address,address,uint256)"(
       from: string,

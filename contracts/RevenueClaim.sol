@@ -41,14 +41,13 @@ contract RevenueClaim is ReentrancyGuard {
 
     // Main Function
 
-    function claim(uint256 tokenId, uint256 amount, bytes32[] memory merkleProof) public virtual nonReentrant returns (bool) {  
+    function claim(uint256 tokenId, uint256 amount, bytes32[] memory merkleProof) external virtual nonReentrant {  
         require(IERC721(NFT).ownerOf(tokenId) == msg.sender, "your are not the owner of ERC721");
         require(!claimed[msg.sender][tokenId], "reward alrready claimed");
         require(_verifyClaim(msg.sender, tokenId, amount, merkleProof), "merkle proof fail");
         require(_transferToken(msg.sender, amount), "reward transfer fail");
         claimed[msg.sender][tokenId] = true;
         emit Claimed(msg.sender, tokenId, amount);
-        return true;
     }
 
     // Internal Functions

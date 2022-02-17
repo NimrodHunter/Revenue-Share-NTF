@@ -43,7 +43,7 @@ contract StakedShare is ERC721, ReentrancyGuard {
 
     // Main Functions
 
-    function stake(uint128 amount, uint128 lock) public virtual nonReentrant returns (bool) {
+    function stake(uint128 amount, uint128 lock) external virtual nonReentrant {
         require(amount > 0, "you should send something");
         uint64 lockedTime = uint32(lock) * MIN_LOKED_TIME;
         require(lockedTime <= MAX_LOKED_TIME, "you should lock less than 1 year");
@@ -53,10 +53,9 @@ contract StakedShare is ERC721, ReentrancyGuard {
         _safeMint(msg.sender, rsId, "new revenue share token");
         revToken[rsId] = RSToken({created: uint64(block.timestamp), locked: uint64(lockedTime), amount: amount});
         emit Staked(msg.sender, amount, rsId);
-        return true;
     }
 
-    function withdraw(uint256 tokenId) public virtual nonReentrant returns (bool) {
+    function withdraw(uint256 tokenId) external virtual nonReentrant {
         require(ownerOf(tokenId) == msg.sender, "you are not the owner of the token");
         RSToken memory rs = revToken[tokenId];
         uint256 lockedTime = uint256(rs.created + rs.locked);
@@ -65,11 +64,16 @@ contract StakedShare is ERC721, ReentrancyGuard {
         delete revToken[tokenId];
         require(_transferToken(msg.sender, uint256(rs.amount)), "transfer reward token fail");
         emit Withdrawn(msg.sender, uint256(rs.amount), tokenId);
-        return true;
     }
 
 
     // Getters
+
+    function rsToken(uint256 tokenId) public view virtual returns (uint64, uint64, uint128) {
+        require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
+        RSToken memory rs = revToken[tokenId];
+        return (rs.created, rs.locked, rs.amount);
+    }
 
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");

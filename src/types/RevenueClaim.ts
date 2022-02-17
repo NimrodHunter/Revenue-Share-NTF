@@ -128,7 +128,7 @@ export interface RevenueClaim extends BaseContract {
       amount: BigNumberish,
       merkleProof: BytesLike[],
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     initialize(
       NFT_: string,

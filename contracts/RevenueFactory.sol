@@ -5,9 +5,10 @@ import "./Clones.sol";
 import "./RevenueClaim.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 //solhint-disable-line
-contract RevenueFactory is Ownable {
+contract RevenueFactory is Ownable, ReentrancyGuard {
 
     address immutable private implementation;
 
@@ -18,7 +19,7 @@ contract RevenueFactory is Ownable {
 
     // Main Function
 
-    function revenueShare(address NFT, address rewardToken, uint256 amount, bytes32 root_) external onlyOwner {
+    function revenueShare(address NFT, address rewardToken, uint256 amount, bytes32 root_) external virtual nonReentrant onlyOwner {
         require(root_[0] != 0, "empty root");
         require(rewardToken != address(0), "reward token should not be 0");
         require(amount > 0, "amount should be greater than 0");
