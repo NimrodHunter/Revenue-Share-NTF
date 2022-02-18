@@ -21,4 +21,4 @@ Revenue Share Mechanism that use a NFT Token to reward and incentive long term h
 - Avoid Airdrop Hunters
 - NFT creation (with new open DeFi uses)
 - Incentive Loyalty and Community
-
+- The distribution of reward are directly proportional to how long you stake
