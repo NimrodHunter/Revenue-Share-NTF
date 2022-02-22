@@ -1,4 +1,6 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: UNLICENSED
+// Copyright (c) 2022 Crypto Barter - All rights reserved
+// cryptobarter.io
 // @title StakedShare
 // @notice Provides functions to stake ERC20 and get NFT in order to claim passive income
 // @author Anibal Catalan <anibalcatalanf@gmail.com>
