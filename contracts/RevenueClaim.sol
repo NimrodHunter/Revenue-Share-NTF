@@ -1,6 +1,8 @@
-// SPDX-License-Identifier: MIT
-// @title StakedShare
-// @notice Provides functions to claim passive income through an NFT
+// SPDX-License-Identifier: UNLICENSED
+// Copyright (c) 2022 Crypto Barter - All rights reserved
+// cryptobarter.io
+// @title RevenueClaim
+// @notice Provides functions to claim reward with a merkle tree pattern.
 // @author Anibal Catalan <anibalcatalanf@gmail.com>
 
 pragma solidity >=0.8.4;
@@ -14,21 +16,18 @@ import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 //solhint-disable-line
 contract RevenueClaim is ReentrancyGuard {
 
-    address private initializer;
+    bool private initialized;
     address private NFT;
     bytes32 private root;
     address public rewardToken;
     
     mapping(address => mapping(uint256 => bool)) private claimed;
 
-    constructor()
-    {
-        initializer = msg.sender;
-    }
+    constructor() {}
 
     // Initializer
     function initialize(address NFT_, address rewardToken_, uint256 amount, bytes32 root_) external {   
-        require(initializer == msg.sender, "msg.sender it is not the initializer");
+        require(!initialized, "already initialized");
         require(root_[0] != 0, "empty root");
         require(rewardToken != address(0), "reward token should not be 0");
         require(amount > 0, "amount should be greater than 0");
@@ -36,12 +35,13 @@ contract RevenueClaim is ReentrancyGuard {
         NFT = NFT_;
         rewardToken = rewardToken_;
         root = root_;
-        initializer = address(0);
+        initialized = !initialized;
     }
 
     // Main Function
 
     function claim(uint256 tokenId, uint256 amount, bytes32[] memory merkleProof) external virtual nonReentrant {  
+        require(initialized, "contract should be initialized");
         require(IERC721(NFT).ownerOf(tokenId) == msg.sender, "your are not the owner of ERC721");
         require(!claimed[msg.sender][tokenId], "reward alrready claimed");
         require(_verifyClaim(msg.sender, tokenId, amount, merkleProof), "merkle proof fail");

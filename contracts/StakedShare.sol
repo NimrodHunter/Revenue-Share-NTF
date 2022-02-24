@@ -50,6 +50,7 @@ contract StakedShare is ERC721, ReentrancyGuard {
         uint64 lockedTime = uint32(lock) * MIN_LOKED_TIME;
         require(lockedTime <= MAX_LOKED_TIME, "you should lock less than 1 year");
         require(IERC20(projectToken).allowance(msg.sender, address(this)) >= uint256(amount), "token not allowed");
+        
         require(_transferFrom(msg.sender, amount), "transfer from fails");
         rsId = ++rsId;
         _safeMint(msg.sender, rsId, "new revenue share token");
@@ -62,10 +63,55 @@ contract StakedShare is ERC721, ReentrancyGuard {
         RSToken memory rs = revToken[tokenId];
         uint256 lockedTime = uint256(rs.created + rs.locked);
         require(block.timestamp >= lockedTime, "your token it is locked");
+        
         _burn(tokenId);
         delete revToken[tokenId];
         require(_transferToken(msg.sender, uint256(rs.amount)), "transfer reward token fail");
-        emit Withdrawn(msg.sender, uint256(rs.amount), tokenId);
+        emit Withdrawn(msg.sender, rs.amount, tokenId);
+    }
+
+    function increaseStake(uint256 tokenId, uint128 amount) external virtual nonReentrant {
+        require(amount > 0, "you should send something");
+        require(ownerOf(tokenId) == msg.sender, "you are not the owner of the token");
+        require(IERC20(projectToken).allowance(msg.sender, address(this)) >= uint256(amount), "token not allowed");
+        
+        require(_transferFrom(msg.sender, amount), "transfer from fails");
+        RSToken memory rs = revToken[tokenId];
+        rs.amount += amount;
+        emit IncreaseStaked(msg.sender, rs.amount, tokenId);
+    }
+
+    function increaseTime(uint256 tokenId, uint128 lock) external virtual nonReentrant {
+        require(lock > 0, "you should send something");
+        require(ownerOf(tokenId) == msg.sender, "you are not the owner of the token");
+        RSToken memory rs = revToken[tokenId];
+        uint64 lockedTime = (uint32(lock) * MIN_LOKED_TIME) + rs.locked;
+        require(lockedTime <= MAX_LOKED_TIME, "you should lock less than 1 year");
+
+        rs.locked = lockedTime;
+        emit IncreaseTime(msg.sender, rs.locked, tokenId);
+    }
+
+    function redeem(uint256 tokenId, uint128 amount) external virtual nonReentrant {
+        require(amount > 0, "you should send something");
+        require(ownerOf(tokenId) == msg.sender, "you are not the owner of the token");
+        RSToken memory rs = revToken[tokenId];
+        require(amount <= rs.amount, "do not have enough amount staked");
+        uint64 lockedTime = rs.created + rs.locked;
+        uint64 currentTime = uint64(block.timestamp);
+        require(currentTime < lockedTime, "you can do regular withdraw");
+
+        uint128 taxPercentage = (currentTime * 10000)/lockedTime;
+        uint128 tax = (amount * taxPercentage) /10000;
+        rs.amount -= amount;
+        require(_transferToken(msg.sender, (amount - tax)), "transfer reward token fail");
+
+        if (rs.amount == 0) {
+            _burn(tokenId);
+            delete revToken[tokenId];
+        }
+
+        emit Redeemed(msg.sender, amount, tax);
     }
 
 
@@ -141,7 +187,10 @@ contract StakedShare is ERC721, ReentrancyGuard {
 
     // Events
 
-    event Staked(address indexed staker, uint256 indexed amount, uint256 indexed NFTId);
-    event Withdrawn(address indexed withdrawer, uint256 indexed amount, uint256 indexed NFTId);
+    event Staked(address indexed staker, uint128 indexed amount, uint256 indexed NFTId);
+    event Withdrawn(address indexed withdrawer, uint128 indexed amount, uint256 indexed NFTId);
+    event IncreaseStaked(address indexed staker, uint128 indexed amount, uint256 indexed NFTId);
+    event IncreaseTime(address indexed staker, uint64 indexed time, uint256 indexed NFTId);
+    event Redeemed(address indexed staker, uint128 indexed amount, uint128 tax);
 
 } 

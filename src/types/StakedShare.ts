@@ -23,10 +23,13 @@ export interface StakedShareInterface extends utils.Interface {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
+    "increaseStake(uint256,uint128)": FunctionFragment;
+    "increaseTime(uint256,uint128)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "name()": FunctionFragment;
     "ownerOf(uint256)": FunctionFragment;
     "projectToken()": FunctionFragment;
+    "redeem(uint256,uint128)": FunctionFragment;
     "revToken(uint256)": FunctionFragment;
     "rsId()": FunctionFragment;
     "rsToken(uint256)": FunctionFragment;
@@ -50,6 +53,14 @@ export interface StakedShareInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "increaseStake",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "increaseTime",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "isApprovedForAll",
     values: [string, string]
   ): string;
@@ -61,6 +72,10 @@ export interface StakedShareInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "projectToken",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "redeem",
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "revToken",
@@ -108,6 +123,14 @@ export interface StakedShareInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "increaseStake",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "increaseTime",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "isApprovedForAll",
     data: BytesLike
   ): Result;
@@ -117,6 +140,7 @@ export interface StakedShareInterface extends utils.Interface {
     functionFragment: "projectToken",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "redeem", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "revToken", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "rsId", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "rsToken", data: BytesLike): Result;
@@ -144,13 +168,19 @@ export interface StakedShareInterface extends utils.Interface {
   events: {
     "Approval(address,address,uint256)": EventFragment;
     "ApprovalForAll(address,address,bool)": EventFragment;
-    "Staked(address,uint256,uint256)": EventFragment;
+    "IncreaseStaked(address,uint128,uint256)": EventFragment;
+    "IncreaseTime(address,uint64,uint256)": EventFragment;
+    "Redeemed(address,uint128,uint128)": EventFragment;
+    "Staked(address,uint128,uint256)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
-    "Withdrawn(address,uint256,uint256)": EventFragment;
+    "Withdrawn(address,uint128,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "IncreaseStaked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "IncreaseTime"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Redeemed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Staked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdrawn"): EventFragment;
@@ -169,6 +199,27 @@ export type ApprovalForAllEvent = TypedEvent<
 >;
 
 export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
+
+export type IncreaseStakedEvent = TypedEvent<
+  [string, BigNumber, BigNumber],
+  { staker: string; amount: BigNumber; NFTId: BigNumber }
+>;
+
+export type IncreaseStakedEventFilter = TypedEventFilter<IncreaseStakedEvent>;
+
+export type IncreaseTimeEvent = TypedEvent<
+  [string, BigNumber, BigNumber],
+  { staker: string; time: BigNumber; NFTId: BigNumber }
+>;
+
+export type IncreaseTimeEventFilter = TypedEventFilter<IncreaseTimeEvent>;
+
+export type RedeemedEvent = TypedEvent<
+  [string, BigNumber, BigNumber],
+  { staker: string; amount: BigNumber; tax: BigNumber }
+>;
+
+export type RedeemedEventFilter = TypedEventFilter<RedeemedEvent>;
 
 export type StakedEvent = TypedEvent<
   [string, BigNumber, BigNumber],
@@ -232,6 +283,18 @@ export interface StakedShare extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    increaseStake(
+      tokenId: BigNumberish,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    increaseTime(
+      tokenId: BigNumberish,
+      lock: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     isApprovedForAll(
       owner: string,
       operator: string,
@@ -246,6 +309,12 @@ export interface StakedShare extends BaseContract {
     ): Promise<[string]>;
 
     projectToken(overrides?: CallOverrides): Promise<[string]>;
+
+    redeem(
+      tokenId: BigNumberish,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     revToken(
       arg0: BigNumberish,
@@ -330,6 +399,18 @@ export interface StakedShare extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  increaseStake(
+    tokenId: BigNumberish,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  increaseTime(
+    tokenId: BigNumberish,
+    lock: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   isApprovedForAll(
     owner: string,
     operator: string,
@@ -341,6 +422,12 @@ export interface StakedShare extends BaseContract {
   ownerOf(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   projectToken(overrides?: CallOverrides): Promise<string>;
+
+  redeem(
+    tokenId: BigNumberish,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   revToken(
     arg0: BigNumberish,
@@ -422,6 +509,18 @@ export interface StakedShare extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    increaseStake(
+      tokenId: BigNumberish,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    increaseTime(
+      tokenId: BigNumberish,
+      lock: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     isApprovedForAll(
       owner: string,
       operator: string,
@@ -433,6 +532,12 @@ export interface StakedShare extends BaseContract {
     ownerOf(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
     projectToken(overrides?: CallOverrides): Promise<string>;
+
+    redeem(
+      tokenId: BigNumberish,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     revToken(
       arg0: BigNumberish,
@@ -521,7 +626,40 @@ export interface StakedShare extends BaseContract {
       approved?: null
     ): ApprovalForAllEventFilter;
 
-    "Staked(address,uint256,uint256)"(
+    "IncreaseStaked(address,uint128,uint256)"(
+      staker?: string | null,
+      amount?: BigNumberish | null,
+      NFTId?: BigNumberish | null
+    ): IncreaseStakedEventFilter;
+    IncreaseStaked(
+      staker?: string | null,
+      amount?: BigNumberish | null,
+      NFTId?: BigNumberish | null
+    ): IncreaseStakedEventFilter;
+
+    "IncreaseTime(address,uint64,uint256)"(
+      staker?: string | null,
+      time?: BigNumberish | null,
+      NFTId?: BigNumberish | null
+    ): IncreaseTimeEventFilter;
+    IncreaseTime(
+      staker?: string | null,
+      time?: BigNumberish | null,
+      NFTId?: BigNumberish | null
+    ): IncreaseTimeEventFilter;
+
+    "Redeemed(address,uint128,uint128)"(
+      staker?: string | null,
+      amount?: BigNumberish | null,
+      tax?: null
+    ): RedeemedEventFilter;
+    Redeemed(
+      staker?: string | null,
+      amount?: BigNumberish | null,
+      tax?: null
+    ): RedeemedEventFilter;
+
+    "Staked(address,uint128,uint256)"(
       staker?: string | null,
       amount?: BigNumberish | null,
       NFTId?: BigNumberish | null
@@ -543,7 +681,7 @@ export interface StakedShare extends BaseContract {
       tokenId?: BigNumberish | null
     ): TransferEventFilter;
 
-    "Withdrawn(address,uint256,uint256)"(
+    "Withdrawn(address,uint128,uint256)"(
       withdrawer?: string | null,
       amount?: BigNumberish | null,
       NFTId?: BigNumberish | null
@@ -569,6 +707,18 @@ export interface StakedShare extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    increaseStake(
+      tokenId: BigNumberish,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    increaseTime(
+      tokenId: BigNumberish,
+      lock: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     isApprovedForAll(
       owner: string,
       operator: string,
@@ -583,6 +733,12 @@ export interface StakedShare extends BaseContract {
     ): Promise<BigNumber>;
 
     projectToken(overrides?: CallOverrides): Promise<BigNumber>;
+
+    redeem(
+      tokenId: BigNumberish,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     revToken(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -662,6 +818,18 @@ export interface StakedShare extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    increaseStake(
+      tokenId: BigNumberish,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    increaseTime(
+      tokenId: BigNumberish,
+      lock: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     isApprovedForAll(
       owner: string,
       operator: string,
@@ -676,6 +844,12 @@ export interface StakedShare extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     projectToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    redeem(
+      tokenId: BigNumberish,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     revToken(
       arg0: BigNumberish,

@@ -1,4 +1,10 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: UNLICENSED
+// Copyright (c) 2022 Crypto Barter - All rights reserved
+// cryptobarter.io
+// @title RevenueFactory
+// @notice Provides functions to create a copy of  Revenue Claim contract
+// @author Anibal Catalan <anibalcatalanf@gmail.com>
+
 pragma solidity >=0.8.4;
 
 import "./Clones.sol";
@@ -10,16 +16,11 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 //solhint-disable-line
 contract RevenueFactory is Ownable, ReentrancyGuard {
 
-    address immutable private implementation;
-
-    constructor(address implementation_) Ownable() {
-        require(implementation_ != address(0), "should not be address 0");
-        implementation = implementation_;
-    }
+    constructor() Ownable() {}
 
     // Main Function
 
-    function revenueShare(address NFT, address rewardToken, uint256 amount, bytes32 root_) external virtual nonReentrant onlyOwner {
+    function revenueShare(address implementation, address NFT, address rewardToken, uint256 amount, bytes32 root_) external virtual nonReentrant onlyOwner {
         require(root_[0] != 0, "empty root");
         require(rewardToken != address(0), "reward token should not be 0");
         require(amount > 0, "amount should be greater than 0");

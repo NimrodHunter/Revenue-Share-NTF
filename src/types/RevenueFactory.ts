@@ -22,7 +22,7 @@ export interface RevenueFactoryInterface extends utils.Interface {
   functions: {
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "revenueShare(address,address,uint256,bytes32)": FunctionFragment;
+    "revenueShare(address,address,address,uint256,bytes32)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
@@ -33,7 +33,7 @@ export interface RevenueFactoryInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "revenueShare",
-    values: [string, string, BigNumberish, BytesLike]
+    values: [string, string, string, BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -113,6 +113,7 @@ export interface RevenueFactory extends BaseContract {
     ): Promise<ContractTransaction>;
 
     revenueShare(
+      implementation: string,
       NFT: string,
       rewardToken: string,
       amount: BigNumberish,
@@ -133,6 +134,7 @@ export interface RevenueFactory extends BaseContract {
   ): Promise<ContractTransaction>;
 
   revenueShare(
+    implementation: string,
     NFT: string,
     rewardToken: string,
     amount: BigNumberish,
@@ -151,6 +153,7 @@ export interface RevenueFactory extends BaseContract {
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     revenueShare(
+      implementation: string,
       NFT: string,
       rewardToken: string,
       amount: BigNumberish,
@@ -194,6 +197,7 @@ export interface RevenueFactory extends BaseContract {
     ): Promise<BigNumber>;
 
     revenueShare(
+      implementation: string,
       NFT: string,
       rewardToken: string,
       amount: BigNumberish,
@@ -215,6 +219,7 @@ export interface RevenueFactory extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     revenueShare(
+      implementation: string,
       NFT: string,
       rewardToken: string,
       amount: BigNumberish,
