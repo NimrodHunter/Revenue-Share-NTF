@@ -26,3 +26,12 @@ Revenue Share Mechanism that use a NFT Token to reward and incentive long term h
 - The distribution of reward are directly proportional to how long you stake
 - The percentage of disccounts are proportional to how long you stake
 - The amount of token that your can buy with discoount are proportional to how much you stak.
+
+
+#### Kovan Deploys
+
+- Staked Share: 0x30A879399cb300E4f32d1fCEFf4F7dAbcE79dE8f
+- Faucet: 0x3eD04358879E64dc5DeeC645aF010DFEC93E9dB6
+- Mock Aave Token: 0x42cf917EDFBbf2799C0C139Ed7b398ecF1d6bBC6
+- Mock USDC Token: 0x3182042B07AD39405D2Be2a47cF320252efFF033
+

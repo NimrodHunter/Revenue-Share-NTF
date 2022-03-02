@@ -17,10 +17,12 @@ import "./Base64.sol";
 contract StakedShare is ERC721, ReentrancyGuard {
 
     //Max Loked Period;
-    uint32 internal constant MAX_LOKED_TIME = 60 * 60 * 24 * 365; // 1 year
+    //uint32 internal constant MAX_LOKED_TIME = 60 * 60 * 24 * 365; // 1 year
+    uint32 internal constant MAX_LOKED_TIME = 60 * 3; // 3 minutes
 
     //Min Locked Period;
-    uint32 internal constant MIN_LOKED_TIME = 60 * 60 * 24 * 7; // 1 week
+    //uint32 internal constant MIN_LOKED_TIME = 60 * 60 * 24 * 7; // 1 week
+    uint32 internal constant MIN_LOKED_TIME = 30; // 30 sec
 
     //ERC20 Project Token
     address immutable public projectToken;
@@ -35,6 +37,9 @@ contract StakedShare is ERC721, ReentrancyGuard {
 
     // token id as counter
     uint256 public rsId;
+
+    //total amount staked;
+    uint256 internal tlv;
 
     constructor(address projectToken_)
         ERC721("Revenue Token", "RT")
@@ -55,6 +60,7 @@ contract StakedShare is ERC721, ReentrancyGuard {
         rsId = ++rsId;
         _safeMint(msg.sender, rsId, "new revenue share token");
         revToken[rsId] = RSToken({created: uint64(block.timestamp), locked: uint64(lockedTime), amount: amount});
+        tlv += amount;
         emit Staked(msg.sender, amount, rsId);
     }
 
@@ -67,6 +73,7 @@ contract StakedShare is ERC721, ReentrancyGuard {
         _burn(tokenId);
         delete revToken[tokenId];
         require(_transferToken(msg.sender, uint256(rs.amount)), "transfer reward token fail");
+        tlv -= rs.amount;
         emit Withdrawn(msg.sender, rs.amount, tokenId);
     }
 
@@ -111,11 +118,16 @@ contract StakedShare is ERC721, ReentrancyGuard {
             delete revToken[tokenId];
         }
 
+        tlv -= amount;
         emit Redeemed(msg.sender, amount, tax);
     }
 
 
     // Getters
+
+    function totalVolumenLoad() public view virtual returns (uint256) {
+        return tlv;
+    }
 
     function rsToken(uint256 tokenId) public view virtual returns (uint64, uint64, uint128) {
         require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");

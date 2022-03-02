@@ -6,6 +6,7 @@ export function shouldBehaveLikeStakedShare(): void {
         let owner = this.signers.admin;
         let proyectToken  = await this.stakedShare.connect(owner).projectToken();
         expect(proyectToken.toString()).to.equal(this.mockToken.address);
+        console.log(owner.address)
     });
 
     it("Successful Stake", async function () { 
