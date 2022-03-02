@@ -30,8 +30,7 @@ Revenue Share Mechanism that use a NFT Token to reward and incentive long term h
 
 #### Kovan Deploys
 
-- Staked Share: 0x30A879399cb300E4f32d1fCEFf4F7dAbcE79dE8f
+- Staked Share: [0x30A879399cb300E4f32d1fCEFf4F7dAbcE79dE8f](https://kovan.etherscan.io/address/0x30A879399cb300E4f32d1fCEFf4F7dAbcE79dE8f)
 - Faucet: 0x3eD04358879E64dc5DeeC645aF010DFEC93E9dB6
 - Mock Aave Token: 0x42cf917EDFBbf2799C0C139Ed7b398ecF1d6bBC6
 - Mock USDC Token: 0x3182042B07AD39405D2Be2a47cF320252efFF033
-
