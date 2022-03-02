@@ -34,3 +34,7 @@ Revenue Share Mechanism that use a NFT Token to reward and incentive long term h
 - Faucet: [0x3eD04358879E64dc5DeeC645aF010DFEC93E9dB6](https://kovan.etherscan.io/address/0x3eD04358879E64dc5DeeC645aF010DFEC93E9dB6)
 - Mock Aave Token: [0x42cf917EDFBbf2799C0C139Ed7b398ecF1d6bBC6](https://kovan.etherscan.io/address/0x42cf917EDFBbf2799C0C139Ed7b398ecF1d6bBC6)
 - Mock USDC Token: [0x3182042B07AD39405D2Be2a47cF320252efFF033](0x3182042B07AD39405D2Be2a47cF320252efFF033)
+
+#### POC artifacts
+- [Staked Share](https://github.com/NimrodHunter/Revenue-Share-NTF/blob/master/poc-artifacts/StakedShare.json)
+- [Mock Token](https://github.com/NimrodHunter/Revenue-Share-NTF/blob/master/poc-artifacts/MockToken.json)
