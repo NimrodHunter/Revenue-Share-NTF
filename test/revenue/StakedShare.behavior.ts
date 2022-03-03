@@ -1,23 +1,26 @@
 import { expect } from "chai";
 import { increaseTime } from "../utils/utils";
+import type { Artifact } from "hardhat/types";
+import { artifacts, ethers, waffle } from "hardhat";
+import type { MockToken } from "../../src/types/MockToken";
 
 export function shouldBehaveLikeStakedShare(): void {
     it("Successful Deployment", async function () { 
         let owner = this.signers.admin;
         let proyectToken  = await this.stakedShare.connect(owner).projectToken();
-        expect(proyectToken.toString()).to.equal(this.mockToken.address);
-        console.log(owner.address)
+        expect(proyectToken.toString()).to.equal(this.projectToken.address);
     });
 
     it("Successful Stake", async function () { 
+
         let owner = this.signers.admin;
         let stakedAmount = 1000;
         let lockedTime = 4; // weeks
 
         // approve token trasnfer
-        let approveTx = await this.mockToken.connect(owner).approve(this.stakedShare.address, this.maxUint256);
+        let approveTx = await this.projectToken.connect(owner).approve(this.stakedShare.address, this.maxUint256);
         await approveTx.wait();
-        let allowedAmount = await this.mockToken.connect(owner).allowance(owner.address, this.stakedShare.address);
+        let allowedAmount = await this.projectToken.connect(owner).allowance(owner.address, this.stakedShare.address);
         expect(allowedAmount).to.equal(this.maxUint256);
 
         //loked stake
@@ -30,7 +33,7 @@ export function shouldBehaveLikeStakedShare(): void {
         let NFTid = eventParams?.NFTId.toNumber();
 
         //Revenue Share contarct received project Tokens
-        let revContractBalance = await this.mockToken.connect(owner).balanceOf(this.stakedShare.address);
+        let revContractBalance = await this.projectToken.connect(owner).balanceOf(this.stakedShare.address);
         expect(revContractBalance.toNumber()).to.equal(stakedAmount);
 
         //verify the ownership of the first NFT
@@ -50,11 +53,11 @@ export function shouldBehaveLikeStakedShare(): void {
     it("Successful Withdraw", async function () {
         let owner = this.signers.admin;
         let stakedAmount = 1000;
-        let lockedTime = 4; // weeks
-        let increasedTime = 60 * 60 * 24 * 7 * 5 // 5 weeks
+        let lockedTime = 4; // 120 sec
+        let increasedTime = 30 * 5 // 150 sec
 
         // approve token trasnfer
-        let approveTx = await this.mockToken.connect(owner).approve(this.stakedShare.address, this.maxUint256);
+        let approveTx = await this.projectToken.connect(owner).approve(this.stakedShare.address, this.maxUint256);
         await approveTx.wait();
 
         //loked stake
@@ -78,7 +81,7 @@ export function shouldBehaveLikeStakedShare(): void {
 
         // Expected 0 Project token balance in StakedShare contract
 
-        let balanceOfRS = await this.mockToken.connect(owner).balanceOf(this.stakedShare.address);
+        let balanceOfRS = await this.projectToken.connect(owner).balanceOf(this.stakedShare.address);
         expect(balanceOfRS.toNumber()).to.equal(0);
 
     });
@@ -86,11 +89,11 @@ export function shouldBehaveLikeStakedShare(): void {
     it("Fail Withdraw, your token it is locked", async function () {
         let owner = this.signers.admin;
         let stakedAmount = 1000;
-        let lockedTime = 4; // weeks
-        let increasedTime = 60 * 60 * 24 * 7 * 3 // 3 weeks
+        let lockedTime = 4; // 120 sec
+        let increasedTime = 30 * 3 // 90 sec
 
         // approve token trasnfer
-        let approveTx = await this.mockToken.connect(owner).approve(this.stakedShare.address, this.maxUint256);
+        let approveTx = await this.projectToken.connect(owner).approve(this.stakedShare.address, this.maxUint256);
         await approveTx.wait();
 
         //loked stake
@@ -109,5 +112,6 @@ export function shouldBehaveLikeStakedShare(): void {
         // revert expected
         await expect(this.stakedShare.connect(owner).withdraw(NFTid)).to.be.revertedWith("your token it is locked");       
     });
+
 
 }

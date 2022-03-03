@@ -19,14 +19,14 @@ task("deploy:StakedShare")
     await faucet.deployed();
     console.log("Faucet deployed to: ", faucet.address);
     */
-
+/*
     const mockTokenFactory: MockToken__factory = <MockToken__factory>await ethers.getContractFactory("MockToken");
     const mockToken: MockToken = <MockToken>await mockTokenFactory.deploy(initialSupply);
     await mockToken.deployed();
     console.log("Mock Token deployed to: ", mockToken.address);
-
+     */
     const stakedShareFactory: StakedShare__factory = <StakedShare__factory>await ethers.getContractFactory("StakedShare");
-    const stakedShare: StakedShare = <StakedShare>await stakedShareFactory.deploy(mockToken.address);
+    const stakedShare: StakedShare = <StakedShare>await stakedShareFactory.deploy();
     await stakedShare.deployed();
     console.log("Staked Share deployed to: ", stakedShare.address);
 });

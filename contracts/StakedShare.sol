@@ -7,14 +7,14 @@
 
 pragma solidity >=0.8.4;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "./NFT.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./Base64.sol";
 
 //solhint-disable-line
-contract StakedShare is ERC721, ReentrancyGuard {
+contract StakedShare is NFT, ReentrancyGuard {
 
     //Max Loked Period;
     //uint32 internal constant MAX_LOKED_TIME = 60 * 60 * 24 * 365; // 1 year
@@ -25,7 +25,10 @@ contract StakedShare is ERC721, ReentrancyGuard {
     uint32 internal constant MIN_LOKED_TIME = 30; // 30 sec
 
     //ERC20 Project Token
-    address immutable public projectToken;
+    address internal _projectToken;
+
+    // Project Loco
+    string internal _logo;
 
     struct RSToken {
         uint64 created;
@@ -41,20 +44,25 @@ contract StakedShare is ERC721, ReentrancyGuard {
     //total amount staked;
     uint256 internal tlv;
 
-    constructor(address projectToken_)
-        ERC721("Revenue Token", "RT")
-    {
-        require(projectToken_ != address(0), "should have a valid token address");
-        projectToken = projectToken_;
+    constructor() {}
+
+    // Initializer
+    function initialize(address projectToken_, string memory name, string memory symbol, string memory logo_) external {   
+        require(!initialized, "contract already initialized");
+        NFT(address(this)).initialize(name, symbol);
+        _projectToken = projectToken_;
+        _logo = logo_;
+        _name = name;
+        _symbol = symbol;
     }
 
     // Main Functions
 
-    function stake(uint128 amount, uint128 lock) external virtual nonReentrant {
+    function stake(uint128 amount, uint128 lock) external virtual nonReentrant isInitialized {
         require(amount > 0, "you should send something");
         uint64 lockedTime = uint32(lock) * MIN_LOKED_TIME;
         require(lockedTime <= MAX_LOKED_TIME, "you should lock less than 1 year");
-        require(IERC20(projectToken).allowance(msg.sender, address(this)) >= uint256(amount), "token not allowed");
+        require(IERC20(_projectToken).allowance(msg.sender, address(this)) >= uint256(amount), "token not allowed");
         
         require(_transferFrom(msg.sender, amount), "transfer from fails");
         rsId = ++rsId;
@@ -64,7 +72,7 @@ contract StakedShare is ERC721, ReentrancyGuard {
         emit Staked(msg.sender, amount, rsId);
     }
 
-    function withdraw(uint256 tokenId) external virtual nonReentrant {
+    function withdraw(uint256 tokenId) external virtual nonReentrant isInitialized {
         require(ownerOf(tokenId) == msg.sender, "you are not the owner of the token");
         RSToken memory rs = revToken[tokenId];
         uint256 lockedTime = uint256(rs.created + rs.locked);
@@ -77,10 +85,10 @@ contract StakedShare is ERC721, ReentrancyGuard {
         emit Withdrawn(msg.sender, rs.amount, tokenId);
     }
 
-    function increaseStake(uint256 tokenId, uint128 amount) external virtual nonReentrant {
+    function increaseStake(uint256 tokenId, uint128 amount) external virtual nonReentrant isInitialized {
         require(amount > 0, "you should send something");
         require(ownerOf(tokenId) == msg.sender, "you are not the owner of the token");
-        require(IERC20(projectToken).allowance(msg.sender, address(this)) >= uint256(amount), "token not allowed");
+        require(IERC20(_projectToken).allowance(msg.sender, address(this)) >= uint256(amount), "token not allowed");
         
         require(_transferFrom(msg.sender, amount), "transfer from fails");
         RSToken memory rs = revToken[tokenId];
@@ -88,7 +96,7 @@ contract StakedShare is ERC721, ReentrancyGuard {
         emit IncreaseStaked(msg.sender, rs.amount, tokenId);
     }
 
-    function increaseTime(uint256 tokenId, uint128 lock) external virtual nonReentrant {
+    function increaseTime(uint256 tokenId, uint128 lock) external virtual nonReentrant isInitialized {
         require(lock > 0, "you should send something");
         require(ownerOf(tokenId) == msg.sender, "you are not the owner of the token");
         RSToken memory rs = revToken[tokenId];
@@ -99,7 +107,7 @@ contract StakedShare is ERC721, ReentrancyGuard {
         emit IncreaseTime(msg.sender, rs.locked, tokenId);
     }
 
-    function redeem(uint256 tokenId, uint128 amount) external virtual nonReentrant {
+    function redeem(uint256 tokenId, uint128 amount) external virtual nonReentrant isInitialized {
         require(amount > 0, "you should send something");
         require(ownerOf(tokenId) == msg.sender, "you are not the owner of the token");
         RSToken memory rs = revToken[tokenId];
@@ -125,17 +133,25 @@ contract StakedShare is ERC721, ReentrancyGuard {
 
     // Getters
 
-    function totalVolumenLoad() public view virtual returns (uint256) {
+    function totalVolumenLoad() public view virtual isInitialized returns (uint256) {
         return tlv;
     }
 
-    function rsToken(uint256 tokenId) public view virtual returns (uint64, uint64, uint128) {
+    function projectToken() public view virtual isInitialized returns (address) {
+        return _projectToken;
+    }
+
+    function logo() public view virtual isInitialized returns (string memory) {
+        return _logo;
+    }
+
+    function rsToken(uint256 tokenId) public view virtual isInitialized returns (uint64, uint64, uint128) {
         require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
         RSToken memory rs = revToken[tokenId];
         return (rs.created, rs.locked, rs.amount);
     }
 
-    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+    function tokenURI(uint256 tokenId) public view virtual override isInitialized returns (string memory) {
         require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
 
         RSToken memory rs = revToken[tokenId];
@@ -186,14 +202,14 @@ contract StakedShare is ERC721, ReentrancyGuard {
     function _transferFrom(address from, uint256 amount) internal virtual returns (bool) {
         require(from != address(0), "must be valid address");
         require(amount > 0, "you must send something");
-        SafeERC20.safeTransferFrom(IERC20(projectToken), from, address(this), amount);
+        SafeERC20.safeTransferFrom(IERC20(_projectToken), from, address(this), amount);
         return true;
     }
 
     function _transferToken(address to, uint256 amount) internal virtual returns (bool) {
         require(to != address(0), "must be valid address");
         require(amount > 0, "you must send something");
-        SafeERC20.safeTransfer(IERC20(projectToken), to, amount);
+        SafeERC20.safeTransfer(IERC20(_projectToken), to, amount);
         return true;
     }
 

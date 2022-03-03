@@ -29,10 +29,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20__factory>;
     getContractFactory(
-      name: "ERC721",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC721__factory>;
-    getContractFactory(
       name: "IERC721Metadata",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC721Metadata__factory>;
@@ -57,9 +53,17 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Faucet__factory>;
     getContractFactory(
+      name: "FeesOracle",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.FeesOracle__factory>;
+    getContractFactory(
       name: "MockToken",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MockToken__factory>;
+    getContractFactory(
+      name: "NFT",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.NFT__factory>;
     getContractFactory(
       name: "RevenueClaim",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -72,6 +76,10 @@ declare module "hardhat/types/runtime" {
       name: "StakedShare",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.StakedShare__factory>;
+    getContractFactory(
+      name: "StakedShareFactory",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.StakedShareFactory__factory>;
 
     getContractAt(
       name: "Ownable",
@@ -93,11 +101,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC20>;
-    getContractAt(
-      name: "ERC721",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ERC721>;
     getContractAt(
       name: "IERC721Metadata",
       address: string,
@@ -129,10 +132,20 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Faucet>;
     getContractAt(
+      name: "FeesOracle",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.FeesOracle>;
+    getContractAt(
       name: "MockToken",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.MockToken>;
+    getContractAt(
+      name: "NFT",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.NFT>;
     getContractAt(
       name: "RevenueClaim",
       address: string,
@@ -148,6 +161,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.StakedShare>;
+    getContractAt(
+      name: "StakedShareFactory",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.StakedShareFactory>;
 
     // default types
     getContractFactory(

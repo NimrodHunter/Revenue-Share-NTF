@@ -13,7 +13,7 @@ contract Faucet {
 
     constructor() {}
 
-    function claim(address token, uint256 amount) internal virtual {
+    function claim(address token, uint256 amount) external virtual {
         require(claimed[msg.sender] + amount < maxClaim, "exceed max amount to claim");
         require(_transferToken(token, msg.sender, amount), "out of funds");
         claimed[msg.sender] += amount;
