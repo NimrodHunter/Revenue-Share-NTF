@@ -45,6 +45,7 @@
     "test": "hardhat test",
     "coverage": "npm run typechain && hardhat coverage --solcoverjs ./.solcover.js --temp artifacts ",
     "deploy": "hardhat deploy:StakedShare",
-    "deploy-kovan": "hardhat deploy:StakedShare --network kovan"
+    "deploy-kovan": "hardhat deploy:StakedShare --network kovan",
+    "deploy-factory": "hardhat deploy:StakedShareFactory"
   }
 }

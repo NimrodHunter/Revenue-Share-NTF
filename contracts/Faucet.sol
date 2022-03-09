@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 //solhint-disable-line
 contract Faucet {
 
-    uint256 private constant maxClaim = 10000;
+    uint256 private constant maxClaim = 10000 * 1000000000000000000;
     mapping(address => uint256) private claimed;
 
     constructor() {}
