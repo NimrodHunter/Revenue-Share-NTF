@@ -91,8 +91,10 @@ contract StakedShare is NFT, ReentrancyGuard {
         require(IERC20(_projectToken).allowance(msg.sender, address(this)) >= uint256(amount), "token not allowed");
         
         require(_transferFrom(msg.sender, amount), "transfer from fails");
-        RSToken memory rs = revToken[tokenId];
+        RSToken storage rs = revToken[tokenId];
+        rs.created = block.timestamp;
         rs.amount += amount;
+        tlv += amount;
         emit IncreaseStaked(msg.sender, rs.amount, tokenId);
     }
 
@@ -103,7 +105,7 @@ contract StakedShare is NFT, ReentrancyGuard {
         uint64 lockedTime = (uint32(lock) * MIN_LOKED_TIME) + rs.locked;
         require(lockedTime <= MAX_LOKED_TIME, "you should lock less than 1 year");
 
-        rs.locked = lockedTime;
+        revToken[tokenId].locked = lockedTime;
         emit IncreaseTime(msg.sender, rs.locked, tokenId);
     }
 
