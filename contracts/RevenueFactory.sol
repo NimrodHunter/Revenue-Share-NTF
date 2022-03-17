@@ -9,6 +9,7 @@ pragma solidity >=0.8.4;
 
 import "./Clones.sol";
 import "./RevenueClaim.sol";
+import "./FeesOracle.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
@@ -16,21 +17,71 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 //solhint-disable-line
 contract RevenueFactory is Ownable, ReentrancyGuard {
 
-    constructor() Ownable() {}
+    uint32 private claimablesRevenue;
+    address private cryptobarter;
+    address private feeOracle;
+    mapping(uint256 => address) internal revenues;
+
+    constructor(address cryptobarter_, address feeOracle_) Ownable() {
+        require(cryptobarter_ != address(0), "cryptobarter address should not be 0");
+        require(feeOracle_ != address(0), "feeOracle address should not be 0");
+        cryptobarter = cryptobarter_;
+        feeOracle = feeOracle_;
+    }
 
     // Main Function
 
-    function revenueShare(address implementation, address NFT, address rewardToken, uint256 amount, bytes32 root_) external virtual nonReentrant onlyOwner {
-        require(root_[0] != 0, "empty root");
-        require(rewardToken != address(0), "reward token should not be 0");
-        require(amount > 0, "amount should be greater than 0");
+    function revenueShare(
+        address implementation
+        , address nft
+        , address rewardToken
+        , uint256 revenue
+        , bytes32 root
+        , uint64 blockNumber
+    ) external virtual payable nonReentrant onlyOwner 
+    {
+        require(msg.value >= FeesOracle(feeOracle).deployRevenueFee(), "invalid fee");
+        require(_safeTransferEth(msg.value), "transfer fee fails");
+        require(root[0] != 0, "empty root");
+        require(
+            rewardToken != address(0)
+            && nft != address(0)
+            && implementation != address(0)
+            , "address should not be 0"
+        );
+        require(revenue > 0 && blockNumber > 0, "should be greater than 0");
         address clone = Clones.clone(implementation);
-        _transferFrom(rewardToken, clone, amount); 
-        RevenueClaim(clone).initialize(NFT, rewardToken, amount, root_);
-        emit Cloned(clone, rewardToken, amount);
+        _transferFrom(rewardToken, clone, revenue); 
+        RevenueClaim(clone).initialize(nft, rewardToken, revenue, root, blockNumber);
+        claimablesRevenue += 1;
+        revenues[claimablesRevenue] = clone;
+        emit Cloned(clone, rewardToken, revenue);
     }
 
+    receive() external payable {
+        revert("directly eth transfers are not allowed");
+    }
+
+    fallback() external payable {
+        revert("directly eth transfers are not allowed");
+    }
+
+    // Getters
+    function claimables() external view virtual returns (uint32) {
+        return claimablesRevenue;
+    }
+
+    function revenuesAddress(uint256 id) external view virtual returns (address) {
+        return revenues[id];
+    }
+
+
     // Internal Functions
+    function _safeTransferEth(uint256 amount) internal virtual returns (bool) {
+        (bool sent, ) = cryptobarter.call{value: amount}("");
+        return sent;
+    }
+
     function _transferFrom(address token, address to, uint256 amount) internal virtual returns (bool) {
         require(to != address(0), "must be valid address");
         require(amount > 0, "you must send something");

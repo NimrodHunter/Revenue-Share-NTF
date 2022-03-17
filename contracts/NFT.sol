@@ -36,11 +36,6 @@ contract NFT is Context, ERC165, IERC721, IERC721Metadata {
     // Allow to initialize
     bool internal initialized;
 
-    modifier isInitialized() {
-        require(initialized, "contract it is not initialized");
-        _;
-    }
-
     /**
      * @dev The initiazize should be set before the constructor.
      */
@@ -57,7 +52,8 @@ contract NFT is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC165-supportsInterface}.
      */
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC165, IERC165) isInitialized returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC165, IERC165) returns (bool) {
+        _isInitialized();
         return
             interfaceId == type(IERC721).interfaceId ||
             interfaceId == type(IERC721Metadata).interfaceId ||
@@ -67,7 +63,8 @@ contract NFT is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC721-balanceOf}.
      */
-    function balanceOf(address owner) public view virtual override isInitialized returns (uint256) {
+    function balanceOf(address owner) public view virtual override returns (uint256) {
+        _isInitialized();
         require(owner != address(0), "ERC721: balance query for the zero address");
         return _balances[owner];
     }
@@ -75,7 +72,8 @@ contract NFT is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC721-ownerOf}.
      */
-    function ownerOf(uint256 tokenId) public view virtual override isInitialized returns (address) {
+    function ownerOf(uint256 tokenId) public view virtual override returns (address) {
+        _isInitialized();
         address owner = _owners[tokenId];
         require(owner != address(0), "ERC721: owner query for nonexistent token");
         return owner;
@@ -84,21 +82,24 @@ contract NFT is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC721Metadata-name}.
      */
-    function name() public view virtual override isInitialized returns (string memory) {
+    function name() public view virtual override returns (string memory) {
+        _isInitialized();
         return _name;
     }
 
     /**
      * @dev See {IERC721Metadata-symbol}.
      */
-    function symbol() public view virtual override isInitialized returns (string memory) {
+    function symbol() public view virtual override returns (string memory) {
+        _isInitialized();
         return _symbol;
     }
 
     /**
      * @dev See {IERC721Metadata-tokenURI}.
      */
-    function tokenURI(uint256 tokenId) public view virtual override isInitialized returns (string memory) {
+    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+        _isInitialized();
         require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
 
         string memory baseURI = _baseURI();
@@ -110,14 +111,17 @@ contract NFT is Context, ERC165, IERC721, IERC721Metadata {
      * token will be the concatenation of the `baseURI` and the `tokenId`. Empty
      * by default, can be overriden in child contracts.
      */
-    function _baseURI() internal view virtual isInitialized returns (string memory) {
+    function _baseURI() internal view virtual returns (string memory) {
+        _isInitialized();
         return "";
+
     }
 
     /**
      * @dev See {IERC721-approve}.
      */
-    function approve(address to, uint256 tokenId) public virtual override isInitialized {
+    function approve(address to, uint256 tokenId) public virtual override {
+        _isInitialized();
         address owner = NFT.ownerOf(tokenId);
         require(to != owner, "ERC721: approval to current owner");
 
@@ -132,7 +136,8 @@ contract NFT is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC721-getApproved}.
      */
-    function getApproved(uint256 tokenId) public view virtual override isInitialized returns (address) {
+    function getApproved(uint256 tokenId) public view virtual override returns (address) {
+        _isInitialized();
         require(_exists(tokenId), "ERC721: approved query for nonexistent token");
 
         return _tokenApprovals[tokenId];
@@ -141,14 +146,16 @@ contract NFT is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC721-setApprovalForAll}.
      */
-    function setApprovalForAll(address operator, bool approved) public virtual override isInitialized {
+    function setApprovalForAll(address operator, bool approved) public virtual override {
+        _isInitialized();
         _setApprovalForAll(_msgSender(), operator, approved);
     }
 
     /**
      * @dev See {IERC721-isApprovedForAll}.
      */
-    function isApprovedForAll(address owner, address operator) public view virtual override isInitialized returns (bool) {
+    function isApprovedForAll(address owner, address operator) public view virtual override returns (bool) {
+        _isInitialized();
         return _operatorApprovals[owner][operator];
     }
 
@@ -159,7 +166,8 @@ contract NFT is Context, ERC165, IERC721, IERC721Metadata {
         address from,
         address to,
         uint256 tokenId
-    ) public virtual override isInitialized {
+    ) public virtual override {
+        _isInitialized();
         //solhint-disable-next-line max-line-length
         require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: transfer caller is not owner nor approved");
 
@@ -173,7 +181,8 @@ contract NFT is Context, ERC165, IERC721, IERC721Metadata {
         address from,
         address to,
         uint256 tokenId
-    ) public virtual override isInitialized {
+    ) public virtual override {
+        _isInitialized();
         safeTransferFrom(from, to, tokenId, "");
     }
 
@@ -185,7 +194,8 @@ contract NFT is Context, ERC165, IERC721, IERC721Metadata {
         address to,
         uint256 tokenId,
         bytes memory _data
-    ) public virtual override isInitialized {
+    ) public virtual override {
+        _isInitialized();
         require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: transfer caller is not owner nor approved");
         _safeTransfer(from, to, tokenId, _data);
     }
@@ -375,6 +385,10 @@ contract NFT is Context, ERC165, IERC721, IERC721Metadata {
         require(owner != operator, "ERC721: approve to caller");
         _operatorApprovals[owner][operator] = approved;
         emit ApprovalForAll(owner, operator, approved);
+    }
+
+    function _isInitialized() internal view virtual {
+        require(initialized, "contract it is not initialized");
     }
 
     /**

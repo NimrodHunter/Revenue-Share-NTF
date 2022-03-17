@@ -1,8 +1,5 @@
 import { expect } from "chai";
-import { increaseTime } from "../utils/utils";
-import type { Artifact } from "hardhat/types";
-import { artifacts, ethers, waffle } from "hardhat";
-import type { MockToken } from "../../src/types/MockToken";
+import { increaseTime } from "../utils/time";
 
 export function shouldBehaveLikeStakedShare(): void {
     it("Successful Deployment", async function () { 
@@ -15,7 +12,7 @@ export function shouldBehaveLikeStakedShare(): void {
 
         let owner = this.signers.admin;
         let stakedAmount = 1000;
-        let lockedTime = 4; // weeks
+        let lockedTime = 4; // 120 sec
 
         // approve token trasnfer
         let approveTx = await this.projectToken.connect(owner).approve(this.stakedShare.address, this.maxUint256);

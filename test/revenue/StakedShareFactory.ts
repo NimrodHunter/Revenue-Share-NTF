@@ -21,7 +21,7 @@ describe("Unit tests", function () {
   describe("Staked Share Factory", function () {
     beforeEach(async function () {
       const initialSupply = this.maxUint256;
-      console.log(initialSupply.toString());
+      //console.log(initialSupply.toString());
       const shareFee = ethers.utils.parseEther("10");
       const revenueFee = ethers.utils.parseEther("0.1");
 

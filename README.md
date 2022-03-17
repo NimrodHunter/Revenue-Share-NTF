@@ -43,7 +43,7 @@ Revenue Share Mechanism that use a NFT Token to reward and incentive long term h
 ##### Staked Share
 - Staked Share Factory: [0xb57b7a7eBbD1e6f30507498D6D2C07b53391AB4f](https://kovan.etherscan.io/address/0xb57b7a7eBbD1e6f30507498D6D2C07b53391AB4f)
 - Staked Share *Implementation*: [0x4F37f255eDD02aBe875f3C92256Ab8f74Bff7a97](https://kovan.etherscan.io/address/0x4F37f255eDD02aBe875f3C92256Ab8f74Bff7a97)
-- Aave Staked Share: [npm](https://kovan.etherscan.io/address/0x59fCcFbE3511B0f1286D54935258cB93AcC18E81)
+- Aave Staked Share: [0x59fCcFbE3511B0f1286D54935258cB93AcC18E81](https://kovan.etherscan.io/address/0x59fCcFbE3511B0f1286D54935258cB93AcC18E81)
 - Anchor Staked Share: [0x10B3Ce8b9B1b6777EE9d798119Ef7Be9BD38EB83](https://kovan.etherscan.io/address/0x10B3Ce8b9B1b6777EE9d798119Ef7Be9BD38EB83)
 
 ##### Revenue Claim

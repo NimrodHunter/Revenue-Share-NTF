@@ -4,6 +4,7 @@
 import {
   BaseContract,
   BigNumber,
+  BigNumberish,
   BytesLike,
   CallOverrides,
   ContractTransaction,
@@ -20,15 +21,23 @@ import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 export interface StakedShareFactoryInterface extends utils.Interface {
   contractName: "StakedShareFactory";
   functions: {
+    "numberOfProjects()": FunctionFragment;
     "owner()": FunctionFragment;
-    "projects()": FunctionFragment;
+    "projectAddress(uint256)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "stakedShare(address,address,string,string,string)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "numberOfProjects",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(functionFragment: "projects", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "projectAddress",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
@@ -42,8 +51,15 @@ export interface StakedShareFactoryInterface extends utils.Interface {
     values: [string]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "numberOfProjects",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "projects", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "projectAddress",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
@@ -109,9 +125,14 @@ export interface StakedShareFactory extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    numberOfProjects(overrides?: CallOverrides): Promise<[number]>;
+
     owner(overrides?: CallOverrides): Promise<[string]>;
 
-    projects(overrides?: CallOverrides): Promise<[number]>;
+    projectAddress(
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -132,9 +153,11 @@ export interface StakedShareFactory extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  numberOfProjects(overrides?: CallOverrides): Promise<number>;
+
   owner(overrides?: CallOverrides): Promise<string>;
 
-  projects(overrides?: CallOverrides): Promise<number>;
+  projectAddress(id: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   renounceOwnership(
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -155,9 +178,14 @@ export interface StakedShareFactory extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    numberOfProjects(overrides?: CallOverrides): Promise<number>;
+
     owner(overrides?: CallOverrides): Promise<string>;
 
-    projects(overrides?: CallOverrides): Promise<number>;
+    projectAddress(
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
@@ -197,9 +225,14 @@ export interface StakedShareFactory extends BaseContract {
   };
 
   estimateGas: {
+    numberOfProjects(overrides?: CallOverrides): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
-    projects(overrides?: CallOverrides): Promise<BigNumber>;
+    projectAddress(
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -221,9 +254,14 @@ export interface StakedShareFactory extends BaseContract {
   };
 
   populateTransaction: {
+    numberOfProjects(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    projects(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    projectAddress(
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }

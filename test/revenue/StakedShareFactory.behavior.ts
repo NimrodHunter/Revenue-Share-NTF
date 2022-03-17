@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { increaseTime } from "../utils/utils";
+import { increaseTime } from "../utils/time";
 import type { Artifact } from "hardhat/types";
 import { artifacts, ethers, waffle } from "hardhat";
 import type { MockToken } from "../../src/types/MockToken";
@@ -8,7 +8,7 @@ export function shouldBehaveLikeStakedShareFactory(): void {
     it("Successful Deployment", async function () { 
         const owner = this.signers.admin;
 
-        const numberOfProjects  = await this.stakedShareFactory.connect(owner).projects();
+        const numberOfProjects  = await this.stakedShareFactory.connect(owner).numberOfProjects();
         expect(numberOfProjects).to.equal(0);
     });
 
@@ -18,19 +18,25 @@ export function shouldBehaveLikeStakedShareFactory(): void {
 
         const implementation = this.stakedShare.address;
         const initialSupply = this.maxUint256;
+        let name = "Aave Tokens";
+        let symbol = "AAVE";
 
         const projectTokenArtifact: Artifact = await artifacts.readArtifact("MockToken");
-        this.projectToken = <MockToken>await waffle.deployContract(this.signers.admin, projectTokenArtifact, [initialSupply]);
+        this.projectToken = <MockToken>await waffle.deployContract(this.signers.admin, projectTokenArtifact, [
+            initialSupply,
+            name,
+            symbol
+        ]);
 
         const projectToken = this.projectToken.address;
-        const name = "Aave Revenue";
-        const symbol = "RAAVE";
+        name = "Aave Revenue";
+        symbol = "RAAVE";
         const logo = "aave.svg";
 
         const cloneTx  = await this.stakedShareFactory.connect(owner).stakedShare(implementation, projectToken, name, symbol, logo, {value: fee});
         const clonedTx = await cloneTx.wait();
 
-        const numberOfProjects  = await this.stakedShareFactory.connect(owner).projects();
+        const numberOfProjects  = await this.stakedShareFactory.connect(owner).numberOfProjects();
         expect(numberOfProjects).to.equal(1);
 
         const event = clonedTx.events?.filter((x: { event: string; }) => {

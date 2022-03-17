@@ -20,7 +20,7 @@ describe("Unit tests", function () {
         this.maxUint256 = ethers.constants.MaxUint256;
     });
 
-    describe("Staked Share Factory", function () {
+    describe("Staked Share", function () {
         beforeEach(async function () {
             //console.log(initialSupply.toString());
             const shareFee = ethers.utils.parseEther("10");
@@ -42,14 +42,20 @@ describe("Unit tests", function () {
             this.stakedShare = <StakedShare>await waffle.deployContract(this.signers.admin, stakedShareArtifact, []);
 
             const initialSupply = this.maxUint256;
+            let name = "Aave Tokens";
+            let symbol = "AAVE";
 
             const projectTokenArtifact: Artifact = await artifacts.readArtifact("MockToken");
-            this.projectToken = <MockToken>await waffle.deployContract(this.signers.admin, projectTokenArtifact, [initialSupply]);
+            this.projectToken = <MockToken>await waffle.deployContract(this.signers.admin, projectTokenArtifact, [
+                initialSupply,
+                name,
+                symbol
+            ]);
         
             const implementation = this.stakedShare.address;
             const projectToken = this.projectToken.address;
-            const name = "Aave Revenue";
-            const symbol = "RAAVE";
+            name = "Aave Revenue";
+            symbol = "RAAVE";
             const logo = "aave.svg";
 
             const cloneTx  = await this.stakedShareFactory.connect(this.signers.admin).stakedShare(implementation, projectToken, name, symbol, logo, {value: shareFee});

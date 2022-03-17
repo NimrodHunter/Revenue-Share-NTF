@@ -9,6 +9,7 @@ import {
   CallOverrides,
   ContractTransaction,
   Overrides,
+  PayableOverrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -20,12 +21,18 @@ import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 export interface RevenueFactoryInterface extends utils.Interface {
   contractName: "RevenueFactory";
   functions: {
+    "claimables()": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "revenueShare(address,address,address,uint256,bytes32)": FunctionFragment;
+    "revenueShare(address,address,address,uint256,bytes32,uint64)": FunctionFragment;
+    "revenuesAddress(uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "claimables",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -33,13 +40,18 @@ export interface RevenueFactoryInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "revenueShare",
-    values: [string, string, string, BigNumberish, BytesLike]
+    values: [string, string, string, BigNumberish, BytesLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revenuesAddress",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [string]
   ): string;
 
+  decodeFunctionResult(functionFragment: "claimables", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
@@ -47,6 +59,10 @@ export interface RevenueFactoryInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "revenueShare",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "revenuesAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -106,6 +122,8 @@ export interface RevenueFactory extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    claimables(overrides?: CallOverrides): Promise<[number]>;
+
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     renounceOwnership(
@@ -114,18 +132,26 @@ export interface RevenueFactory extends BaseContract {
 
     revenueShare(
       implementation: string,
-      NFT: string,
+      nft: string,
       rewardToken: string,
-      amount: BigNumberish,
-      root_: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      revenue: BigNumberish,
+      root: BytesLike,
+      blockNumber: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    revenuesAddress(
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     transferOwnership(
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
+
+  claimables(overrides?: CallOverrides): Promise<number>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -135,12 +161,15 @@ export interface RevenueFactory extends BaseContract {
 
   revenueShare(
     implementation: string,
-    NFT: string,
+    nft: string,
     rewardToken: string,
-    amount: BigNumberish,
-    root_: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    revenue: BigNumberish,
+    root: BytesLike,
+    blockNumber: BigNumberish,
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  revenuesAddress(id: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   transferOwnership(
     newOwner: string,
@@ -148,18 +177,26 @@ export interface RevenueFactory extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    claimables(overrides?: CallOverrides): Promise<number>;
+
     owner(overrides?: CallOverrides): Promise<string>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     revenueShare(
       implementation: string,
-      NFT: string,
+      nft: string,
       rewardToken: string,
-      amount: BigNumberish,
-      root_: BytesLike,
+      revenue: BigNumberish,
+      root: BytesLike,
+      blockNumber: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    revenuesAddress(
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     transferOwnership(
       newOwner: string,
@@ -190,6 +227,8 @@ export interface RevenueFactory extends BaseContract {
   };
 
   estimateGas: {
+    claimables(overrides?: CallOverrides): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceOwnership(
@@ -198,11 +237,17 @@ export interface RevenueFactory extends BaseContract {
 
     revenueShare(
       implementation: string,
-      NFT: string,
+      nft: string,
       rewardToken: string,
-      amount: BigNumberish,
-      root_: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      revenue: BigNumberish,
+      root: BytesLike,
+      blockNumber: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    revenuesAddress(
+      id: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     transferOwnership(
@@ -212,6 +257,8 @@ export interface RevenueFactory extends BaseContract {
   };
 
   populateTransaction: {
+    claimables(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceOwnership(
@@ -220,11 +267,17 @@ export interface RevenueFactory extends BaseContract {
 
     revenueShare(
       implementation: string,
-      NFT: string,
+      nft: string,
       rewardToken: string,
-      amount: BigNumberish,
-      root_: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      revenue: BigNumberish,
+      root: BytesLike,
+      blockNumber: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    revenuesAddress(
+      id: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     transferOwnership(

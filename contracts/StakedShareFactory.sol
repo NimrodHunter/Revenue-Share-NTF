@@ -17,9 +17,10 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 //solhint-disable-line
 contract StakedShareFactory is Ownable, ReentrancyGuard {
 
-    uint32 private revenueProjects;
-    address private cryptobarter;
-    address private feeOracle;
+    uint32 internal revenueProjects;
+    address internal cryptobarter;
+    address internal feeOracle;
+    mapping(uint256 => address) internal projects;
 
     constructor(address cryptobarter_, address feeOracle_) Ownable() {
         require(cryptobarter_ != address(0), "cryptobarter address should not be 0");
@@ -30,26 +31,22 @@ contract StakedShareFactory is Ownable, ReentrancyGuard {
 
     // Main Function
 
-    function stakedShare(address implementation, address projectToken, string memory name, string memory symbol, string memory logo) external virtual payable nonReentrant onlyOwner {
-        require(implementation != address(0), "implementation should not be address 0");
-        require(projectToken != address(0), "reward token should not be address 0");
-        require(msg.value == FeesOracle(feeOracle).deployStakedFee(), "invalid fee");
+    function stakedShare(
+        address implementation
+        , address projectToken
+        , string memory name
+        , string memory symbol
+        , string memory logo
+    ) external virtual payable nonReentrant onlyOwner
+    {
+        require(implementation != address(0) && projectToken != address(0), "should not be address 0");
+        require(msg.value >= FeesOracle(feeOracle).deployStakedFee(), "invalid fee");
         require(_safeTransferEth(msg.value), "transfer fee fails");
         address clone = Clones.clone(implementation);
         StakedShare(clone).initialize(projectToken, name, symbol, logo);
         revenueProjects += 1;
+        projects[revenueProjects] = clone; 
         emit Cloned(clone, projectToken);
-    }
-
-    // Getters
-    function projects() external view virtual returns (uint32) {
-        return revenueProjects;
-    }
-
-    // Internal Functions
-    function _safeTransferEth(uint256 amount) internal virtual returns (bool) {
-        (bool sent, ) = cryptobarter.call{value: amount}("");
-        return sent;
     }
 
     receive() external payable {
@@ -58,6 +55,21 @@ contract StakedShareFactory is Ownable, ReentrancyGuard {
 
     fallback() external payable {
         revert("directly eth transfers are not allowed");
+    }
+
+    // Getters
+    function numberOfProjects() external view virtual returns (uint32) {
+        return revenueProjects;
+    }
+
+    function projectAddress(uint256 id) external view virtual returns (address) {
+        return projects[id];
+    }
+
+    // Internal Functions
+    function _safeTransferEth(uint256 amount) internal virtual returns (bool) {
+        (bool sent, ) = cryptobarter.call{value: amount}("");
+        return sent;
     }
 
     // Event

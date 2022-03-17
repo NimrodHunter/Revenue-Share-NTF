@@ -20,30 +20,54 @@ import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 export interface RevenueClaimInterface extends utils.Interface {
   contractName: "RevenueClaim";
   functions: {
+    "blockNumber()": FunctionFragment;
     "claim(uint256,uint256,bytes32[])": FunctionFragment;
-    "initialize(address,address,uint256,bytes32)": FunctionFragment;
+    "claimed(uint256)": FunctionFragment;
+    "initialize(address,address,uint256,bytes32,uint64)": FunctionFragment;
+    "nft()": FunctionFragment;
+    "revenue()": FunctionFragment;
     "rewardToken()": FunctionFragment;
+    "root()": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "blockNumber",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "claim",
     values: [BigNumberish, BigNumberish, BytesLike[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "initialize",
-    values: [string, string, BigNumberish, BytesLike]
+    functionFragment: "claimed",
+    values: [BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values: [string, string, BigNumberish, BytesLike, BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "nft", values?: undefined): string;
+  encodeFunctionData(functionFragment: "revenue", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "rewardToken",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "root", values?: undefined): string;
 
+  decodeFunctionResult(
+    functionFragment: "blockNumber",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "claimed", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "nft", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "revenue", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "rewardToken",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "root", data: BytesLike): Result;
 
   events: {
     "Claimed(address,uint256,uint256)": EventFragment;
@@ -87,58 +111,91 @@ export interface RevenueClaim extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    blockNumber(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     claim(
       tokenId: BigNumberish,
-      amount: BigNumberish,
+      reward: BigNumberish,
       merkleProof: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    claimed(id: BigNumberish, overrides?: CallOverrides): Promise<[boolean]>;
+
     initialize(
-      NFT_: string,
+      nft_: string,
       rewardToken_: string,
-      amount: BigNumberish,
+      revenue_: BigNumberish,
       root_: BytesLike,
+      blockNumber_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    nft(overrides?: CallOverrides): Promise<[string]>;
+
+    revenue(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     rewardToken(overrides?: CallOverrides): Promise<[string]>;
+
+    root(overrides?: CallOverrides): Promise<[string]>;
   };
+
+  blockNumber(overrides?: CallOverrides): Promise<BigNumber>;
 
   claim(
     tokenId: BigNumberish,
-    amount: BigNumberish,
+    reward: BigNumberish,
     merkleProof: BytesLike[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  claimed(id: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+
   initialize(
-    NFT_: string,
+    nft_: string,
     rewardToken_: string,
-    amount: BigNumberish,
+    revenue_: BigNumberish,
     root_: BytesLike,
+    blockNumber_: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  nft(overrides?: CallOverrides): Promise<string>;
+
+  revenue(overrides?: CallOverrides): Promise<BigNumber>;
+
   rewardToken(overrides?: CallOverrides): Promise<string>;
 
+  root(overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
+    blockNumber(overrides?: CallOverrides): Promise<BigNumber>;
+
     claim(
       tokenId: BigNumberish,
-      amount: BigNumberish,
+      reward: BigNumberish,
       merkleProof: BytesLike[],
       overrides?: CallOverrides
     ): Promise<void>;
 
+    claimed(id: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+
     initialize(
-      NFT_: string,
+      nft_: string,
       rewardToken_: string,
-      amount: BigNumberish,
+      revenue_: BigNumberish,
       root_: BytesLike,
+      blockNumber_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
+    nft(overrides?: CallOverrides): Promise<string>;
+
+    revenue(overrides?: CallOverrides): Promise<BigNumber>;
+
     rewardToken(overrides?: CallOverrides): Promise<string>;
+
+    root(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -155,40 +212,65 @@ export interface RevenueClaim extends BaseContract {
   };
 
   estimateGas: {
+    blockNumber(overrides?: CallOverrides): Promise<BigNumber>;
+
     claim(
       tokenId: BigNumberish,
-      amount: BigNumberish,
+      reward: BigNumberish,
       merkleProof: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    claimed(id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
     initialize(
-      NFT_: string,
+      nft_: string,
       rewardToken_: string,
-      amount: BigNumberish,
+      revenue_: BigNumberish,
       root_: BytesLike,
+      blockNumber_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    nft(overrides?: CallOverrides): Promise<BigNumber>;
+
+    revenue(overrides?: CallOverrides): Promise<BigNumber>;
+
     rewardToken(overrides?: CallOverrides): Promise<BigNumber>;
+
+    root(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    blockNumber(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     claim(
       tokenId: BigNumberish,
-      amount: BigNumberish,
+      reward: BigNumberish,
       merkleProof: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    claimed(
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     initialize(
-      NFT_: string,
+      nft_: string,
       rewardToken_: string,
-      amount: BigNumberish,
+      revenue_: BigNumberish,
       root_: BytesLike,
+      blockNumber_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    nft(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    revenue(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     rewardToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    root(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

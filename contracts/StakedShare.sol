@@ -47,7 +47,13 @@ contract StakedShare is NFT, ReentrancyGuard {
     constructor() {}
 
     // Initializer
-    function initialize(address projectToken_, string memory name, string memory symbol, string memory logo_) external {   
+    function initialize(
+        address projectToken_
+        , string memory name
+        , string memory symbol
+        , string memory logo_
+    ) external 
+    {   
         require(!initialized, "contract already initialized");
         NFT(address(this)).initialize(name, symbol);
         _projectToken = projectToken_;
@@ -58,7 +64,8 @@ contract StakedShare is NFT, ReentrancyGuard {
 
     // Main Functions
 
-    function stake(uint128 amount, uint128 lock) external virtual nonReentrant isInitialized {
+    function stake(uint128 amount, uint128 lock) external virtual nonReentrant {
+        _isInitialized();
         require(amount > 0, "you should send something");
         uint64 lockedTime = uint32(lock) * MIN_LOKED_TIME;
         require(lockedTime <= MAX_LOKED_TIME, "you should lock less than 1 year");
@@ -72,7 +79,8 @@ contract StakedShare is NFT, ReentrancyGuard {
         emit Staked(msg.sender, amount, rsId);
     }
 
-    function withdraw(uint256 tokenId) external virtual nonReentrant isInitialized {
+    function withdraw(uint256 tokenId) external virtual nonReentrant {
+        _isInitialized();
         require(ownerOf(tokenId) == msg.sender, "you are not the owner of the token");
         RSToken memory rs = revToken[tokenId];
         uint256 lockedTime = uint256(rs.created + rs.locked);
@@ -85,20 +93,22 @@ contract StakedShare is NFT, ReentrancyGuard {
         emit Withdrawn(msg.sender, rs.amount, tokenId);
     }
 
-    function increaseStake(uint256 tokenId, uint128 amount) external virtual nonReentrant isInitialized {
+    function increaseStake(uint256 tokenId, uint128 amount) external virtual nonReentrant {
+        _isInitialized();
         require(amount > 0, "you should send something");
         require(ownerOf(tokenId) == msg.sender, "you are not the owner of the token");
         require(IERC20(_projectToken).allowance(msg.sender, address(this)) >= uint256(amount), "token not allowed");
         
         require(_transferFrom(msg.sender, amount), "transfer from fails");
         RSToken storage rs = revToken[tokenId];
-        rs.created = block.timestamp;
+        rs.created = uint64(block.timestamp);
         rs.amount += amount;
         tlv += amount;
         emit IncreaseStaked(msg.sender, rs.amount, tokenId);
     }
 
-    function increaseTime(uint256 tokenId, uint128 lock) external virtual nonReentrant isInitialized {
+    function increaseTime(uint256 tokenId, uint128 lock) external virtual nonReentrant {
+        _isInitialized();
         require(lock > 0, "you should send something");
         require(ownerOf(tokenId) == msg.sender, "you are not the owner of the token");
         RSToken memory rs = revToken[tokenId];
@@ -109,7 +119,8 @@ contract StakedShare is NFT, ReentrancyGuard {
         emit IncreaseTime(msg.sender, rs.locked, tokenId);
     }
 
-    function redeem(uint256 tokenId, uint128 amount) external virtual nonReentrant isInitialized {
+    function redeem(uint256 tokenId, uint128 amount) external virtual nonReentrant {
+        _isInitialized();
         require(amount > 0, "you should send something");
         require(ownerOf(tokenId) == msg.sender, "you are not the owner of the token");
         RSToken memory rs = revToken[tokenId];
@@ -135,25 +146,30 @@ contract StakedShare is NFT, ReentrancyGuard {
 
     // Getters
 
-    function totalVolumenLoad() public view virtual isInitialized returns (uint256) {
+    function totalVolumenLoad() public view virtual returns (uint256) {
+        _isInitialized();
         return tlv;
     }
 
-    function projectToken() public view virtual isInitialized returns (address) {
+    function projectToken() public view virtual returns (address) {
+        _isInitialized();
         return _projectToken;
     }
 
-    function logo() public view virtual isInitialized returns (string memory) {
+    function logo() public view virtual returns (string memory) {
+        _isInitialized();
         return _logo;
     }
 
-    function rsToken(uint256 tokenId) public view virtual isInitialized returns (uint64, uint64, uint128) {
+    function rsToken(uint256 tokenId) public view virtual returns (uint64, uint64, uint128) {
+        _isInitialized();
         require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
         RSToken memory rs = revToken[tokenId];
         return (rs.created, rs.locked, rs.amount);
     }
 
-    function tokenURI(uint256 tokenId) public view virtual override isInitialized returns (string memory) {
+    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+        _isInitialized();
         require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
 
         RSToken memory rs = revToken[tokenId];
