@@ -11,7 +11,7 @@ import type { RevenueClaim } from "../../src/types/RevenueClaim";
 
 import { Signers } from "../types";
 import { projectNFTs, addReward, createMerkleTree } from "../utils/merkle";
-import { shouldBehaveLikeRevenueFactory } from "./RevenueFactory.behavior";
+import { shouldBehaveLikeRevenueClaim } from "./RevenueClaim.behavior";
 
 describe("Unit tests", function () {
   before(async function () {
@@ -106,7 +106,8 @@ describe("Unit tests", function () {
       const blockNfts = await projectNFTs(owner, this.stakedShare);
       const nfts = addReward(blockNfts.nfts);
       const root = createMerkleTree(nfts);
-      this.revClaim = { root, block: blockNfts.block, nfts }
+      this.revClaim = { root, block:blockNfts.block, nfts };
+
       
       // Revenue Claim
       const revenueFactoryArtifact: Artifact = await artifacts.readArtifact("RevenueFactory");
@@ -118,8 +119,38 @@ describe("Unit tests", function () {
       const revenueClaimArtifact: Artifact = await artifacts.readArtifact("RevenueClaim");
       this.revenueClaim = <RevenueClaim>await waffle.deployContract(this.signers.admin, revenueClaimArtifact, []);
 
+      // Clone - Approve - Initialize
+      const revenue = 100000000000;
+
+      this.rewardToken = <MockToken>await waffle.deployContract(this.signers.admin, projectTokenArtifact, [
+        initialSupply,
+        "Coinbase USD",
+        "USDC"
+      ]);
+
+      approveTx = await this.rewardToken.connect(owner).approve(this.revenueFactory.address, this.maxUint256);
+      await approveTx.wait();
+
+      cloneTx  = await this.revenueFactory.connect(owner).revenueShare(
+        this.revenueClaim.address,
+        this.stakedShare.address,
+        this.rewardToken.address,
+        revenue,
+        this.revClaim.root,
+        this.revClaim.block,
+        {value: revenueFee}
+      );
+
+      clonedTx = await cloneTx.wait();
+
+      const revenueCaimAddress = clonedTx.events?.filter((x: { event: string; }) => {
+        return (x.event == "Cloned")
+      })[0].args.clone
+
+      this.revenueClaim = this.revenueClaim.attach(revenueCaimAddress);
+
     });
 
-    shouldBehaveLikeRevenueFactory();
+    shouldBehaveLikeRevenueClaim();
   });
 });

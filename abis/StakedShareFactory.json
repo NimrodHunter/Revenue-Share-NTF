@@ -27,14 +27,8 @@
         {
           "indexed": true,
           "internalType": "address",
-          "name": "rewardToken",
+          "name": "projectToken",
           "type": "address"
-        },
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
         }
       ],
       "name": "Cloned",
@@ -65,7 +59,7 @@
     },
     {
       "inputs": [],
-      "name": "claimables",
+      "name": "numberOfProjects",
       "outputs": [
         {
           "internalType": "uint32",
@@ -79,6 +73,25 @@
     {
       "inputs": [],
       "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "projectAddress",
       "outputs": [
         {
           "internalType": "address",
@@ -105,52 +118,28 @@
         },
         {
           "internalType": "address",
-          "name": "nft",
+          "name": "projectToken",
           "type": "address"
         },
         {
-          "internalType": "address",
-          "name": "rewardToken",
-          "type": "address"
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
         },
         {
-          "internalType": "uint256",
-          "name": "revenue",
-          "type": "uint256"
+          "internalType": "string",
+          "name": "symbol",
+          "type": "string"
         },
         {
-          "internalType": "bytes32",
-          "name": "root",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "uint64",
-          "name": "blockNumber",
-          "type": "uint64"
+          "internalType": "string",
+          "name": "logo",
+          "type": "string"
         }
       ],
-      "name": "revenueShare",
+      "name": "stakedShare",
       "outputs": [],
       "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "id",
-          "type": "uint256"
-        }
-      ],
-      "name": "revenuesAddress",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
       "type": "function"
     },
     {

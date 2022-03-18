@@ -47,8 +47,16 @@ Revenue Share Mechanism that use a NFT Token to reward and incentive long term h
 - Anchor Staked Share: [0x10B3Ce8b9B1b6777EE9d798119Ef7Be9BD38EB83](https://kovan.etherscan.io/address/0x10B3Ce8b9B1b6777EE9d798119Ef7Be9BD38EB83)
 
 ##### Revenue Claim
-WIP
+
+- Revenue Factory: [0x6cdd20B9377BB1BADCA3198D8b4f03A7869B1C7c](https://kovan.etherscan.io/address/0x6cdd20B9377BB1BADCA3198D8b4f03A7869B1C7c)
+
+- Revenue Claim *Implementation*: [0xE8bBA4254fa2EE15a5aa7fbD7a355B45dd03D02D](https://kovan.etherscan.io/address/0xE8bBA4254fa2EE15a5aa7fbD7a355B45dd03D02D7)
 
 
-#### POC ABIS
-WIP
+##### Rewards
+
+- #1 Aave Revenue 10.000.000 USDC reward: [0x8F2FDE3ADD67180cF43d0D9d615C722Cc08b8b16](https://kovan.etherscan.io/address/0x8F2FDE3ADD67180cF43d0D9d615C722Cc08b8b16)
+
+- #2 Aave Revenue 400.000 Aave reward: [0x78A808Cf328CF313b97e1f3eB0A8b7514Df7704e](https://kovan.etherscan.io/address/0x78A808Cf328CF313b97e1f3eB0A8b7514Df7704e)
+
+

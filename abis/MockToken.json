@@ -3,8 +3,18 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "initialSupply_",
+          "name": "initialSupply",
           "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "symbol",
+          "type": "string"
         }
       ],
       "stateMutability": "nonpayable",

@@ -1,5 +1,4 @@
 import { expect } from "chai";
-import { increaseTime } from "../utils/time";
 import type { Artifact } from "hardhat/types";
 import { artifacts, ethers, waffle } from "hardhat";
 import type { MockToken } from "../../src/types/MockToken";

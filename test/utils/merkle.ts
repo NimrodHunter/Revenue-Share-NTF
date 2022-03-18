@@ -3,7 +3,7 @@ import { BigNumberish } from 'ethers'
 import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
 import  { MerkleTree } from 'merkletreejs';
 
-interface NFT {
+export interface NFT {
     id: BigNumberish;
     createAt: BigNumberish;
     locked: BigNumberish;

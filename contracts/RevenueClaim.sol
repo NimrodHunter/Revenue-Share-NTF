@@ -89,7 +89,6 @@ contract RevenueClaim is ReentrancyGuard {
         return _claimed[id];
     }
 
-
     // Internal Functions
     function _isInitialized() internal view virtual {
         require(initialized, "contract it is not initialized");
