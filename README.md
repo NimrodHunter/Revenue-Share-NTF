@@ -4,10 +4,11 @@ Revenue Share Mechanism that use a NFT Token to reward and incentive long term h
 
 ## Goals
 - Revenue Share Mechanism (Passive Income).
-- Loyalty Program.
-- Own your Liquidity.
 - Incentive Long Term Holders.
+- Loyalty Program.
 - Build NFT based Community.
+- Own your Liquidity.
+
 
 ### General Model
 
